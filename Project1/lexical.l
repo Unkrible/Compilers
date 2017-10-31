@@ -1,9 +1,12 @@
 %{
-	#include "stdio.h"
-
-	/* define YY_USER_ACTION */
+	#include <stdio.h>
+	#include <stdlib.h>
+	#include "SyntaxTree.h"
+	#include "syntax.tab.h"
+	
 	int yycolumn = 1;
-	#define YY_USER_ACTION
+	/* define YY_USER_ACTION */
+	#define YY_USER_ACTION \
 		yylloc.first_line = yylloc.last_line = yylineno; \
 		yylloc.first_column = yycolumn; \
 		yylloc.last_column = yycolumn + yyleng - 1; \
@@ -23,9 +26,10 @@ letter [_a-zA-Z]
 
 {digit}+	{ 
 				printf("Integer value %d\n", atoi(yytext)); 
-				yylval = atoi(yytext);
 				return INT;
 			} 
+
+"+"	{ return PLUS; }
 
 \n	{ 
 		printf("Lines should be ++"); 
@@ -38,14 +42,14 @@ letter [_a-zA-Z]
 		}
 
 . 	{ 
-		printf("Error type A at Line %d: Mysterious characters \'%\'\n",
+		printf("Error type A at Line %d: Mysterious characters \'%s\'\n",
 		yylineno,yytext);	
 	}
 
 
 %%
 
-
+/*
 int main(int argc, char** argv){
 	if(argc > 1){
 		if( !(yyin = fopen(argv[1], "r")) ){
@@ -56,3 +60,4 @@ int main(int argc, char** argv){
 	yylex();
 	return 0;
 }
+*/
