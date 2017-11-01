@@ -12,7 +12,8 @@
 #define TYPE_INT 2
 #define TYPE_FLOAT 3
 #define TYPE_STRING 4
-
+#define TYPE_OCT 5
+#define TYPE_HEX 6
 extern int yylineno;
 
 typedef int Type;

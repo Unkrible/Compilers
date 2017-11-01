@@ -32,69 +32,158 @@ LINE		[\n]
 %%
 
 
-{WS}	{		}
+{WS}	{ /* tabs */ }
 
-";"		{ return SEMI;}
+{INT}	{ 
+			yylval.type_node = init("INT",yytext,TYPE_INT,yylineno);
+			return INT;
+		}
 
-","		{ return COMMA;}
+{OCT}	{ 
+			yylval.type_node = init("INT",yytext,TYPE_OCT,yylineno);
+			return INT;
+		}
 
-"="		{ return ASSIGNOP;}
+{HEX}	{ 
+			yylval.type_node = init("INT",yytext,TYPE_HEX,yylineno);
+			return INT;
+		}
 
-{RELOP}	{ return RELOP;}
+{FLOAT}	{ 
+			yylval.type_node = init("FLOAT",yytext,TYPE_FLOAT,yylineno);
+			return FLOAT;
+		}
 
-"+"		{ return PLUS;}
+{ID}	{ 
+			yylval.type_node = init("ID",yytext,TYPE_ID,yylineno);
+			return ID;
+		}
 
-"-"		{ return MINUS;}
+";"		{ 
+			yylval.type_node = init("SEMI",yytext,TYPE_KEYWORD,yylineno);
+			return SEMI;
+		}
 
-"*"		{ return STAR;}
+","		{ 
+			yylval.type_node = init("COMMA",yytext,TYPE_KEYWORD,yylineno);
+			return COMMA;
+		}
 
-"/"		{ return DIV;}
 
-"&&"	{ return AND;}
+"="		{ 
+			yylval.type_node = init("ASSIGNOP",yytext,TYPE_KEYWORD,yylineno);
+			return ASSIGNOP;
+		}
 
-"||"	{ return OR;}
+{RELOP}	{ 
+			yylval.type_node = init("RELOP",yytext,TYPE_KEYWORD,yylineno);
+			return RELOP;
+		}
 
-"."		{ return DOT;}
+"+"		{ 
+			yylval.type_node = init("PLUS",yytext,TYPE_KEYWORD,yylineno);
+			return PLUS;
+		}
 
-"!"		{ return NOT;}
+"-"		{ 
+			yylval.type_node = init("MINUS",yytext,TYPE_KEYWORD,yylineno);
+			return MINUS;
+		}
 
-"("		{ return LP;}
+"*"		{ 
+			yylval.type_node = init("STAR",yytext,TYPE_KEYWORD,yylineno);
+			return STAR;
+		}
 
-")"		{ return RP;}
+"/"		{ 
+			yylval.type_node = init("DIV",yytext,TYPE_KEYWORD,yylineno);
+			return DIV;
+		}
 
-"["		{ return LB;}
+"&&"	{ 
+			yylval.type_node = init("AND",yytext,TYPE_KEYWORD,yylineno);
+			return AND;
+		}
 
-"]"		{ return RB;}
+"||"	{ 
+			yylval.type_node = init("OR",yytext,TYPE_KEYWORD,yylineno);
+			return OR;
+		}
 
-"{"		{ return LC;}
+"!"		{ 
+			yylval.type_node = init("NOT",yytext,TYPE_KEYWORD,yylineno);
+			return NOT;
+		}
 
-"}"		{ return RC;}
+"."		{
+			yylval.type_node = init("DOT",yytext,TYPE_KEYWORD,yylineno);
+			return DOT;
+		}
 
-"int"|"float"	{ return TYPE;}
+"int"|"float"	{ 
+					yylval.type_node = init("TYPE",yytext,TYPE_KEYWORD,yylineno);
+					return TYPE;
+				}
 
-"struct"	{ return STRUCT;}
+"("		{ 
+			yylval.type_node = init("LP",yytext,TYPE_KEYWORD,yylineno);
+			return LP;
+		}
 
-"return"	{ return RETURN;}
+")"		{ 
+			yylval.type_node = init("RP",yytext,TYPE_KEYWORD,yylineno);
+			return RP;
+		}
 
-"if"	{ return IF;}
+"["		{ 
+			yylval.type_node = init("SEMI",yytext,TYPE_KEYWORD,yylineno);
+			return LB;
+		}
 
-"else"	{ return ELSE;}
+"]"		{ 
+			yylval.type_node = init("RB",yytext,TYPE_KEYWORD,yylineno);
+			return RB;
+		}
 
-"while"	{ return WHILE;}
+"{"		{ 
+			yylval.type_node = init("LC",yytext,TYPE_KEYWORD,yylineno);
+			return LC;
+		}
+
+"}"		{ 
+			yylval.type_node = init("RC",yytext,TYPE_KEYWORD,yylineno);
+			return RC;
+		}
+
+"struct"	{ 
+				yylval.type_node = init("STRUCT",yytext,TYPE_KEYWORD,yylineno);
+				return STRUCT;
+			}
+
+"return"	{ 
+				yylval.type_node = init("RETURN",yytext,TYPE_KEYWORD,yylineno);
+				return RETURN;
+			}
+
+"if"	{ 
+			yylval.type_node = init("IF",yytext,TYPE_KEYWORD,yylineno);
+			return IF;
+		}
+
+"else"	{ 
+			yylval.type_node = init("ELSE",yytext,TYPE_KEYWORD,yylineno);
+			return ELSE;
+		}
+
+"while"	{ 
+			yylval.type_node = init("WHILE",yytext,TYPE_KEYWORD,yylineno);
+			return WHILE;
+		}
 
 {LINE}	{
 			yycolumn = 1; 
 		}
 
-{INT}	{ return INT;}
-
-{OCT}	{ return INT;}
-
-{HEX}	{ return INT;}
-
-{FLOAT}	{ return FLOAT;}
-
-{ID}	{ return ID;}
 
 . 		{ 
 			printf("Error type A at line %d: Mysterious character \'%s\'\n"
