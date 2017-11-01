@@ -1,10 +1,13 @@
 #include "SyntaxTree.h"
 #include <string.h>
 
-Node* init(char identifier[], Type type, int line){
+Node* init(char identifier[], char value[], Type type, int line){
 	Node* root = malloc(sizeof(Node));
 	
 	strcpy(root->identifier, identifier);
+	if(value != NULL)
+		strcpy(root->value, value);
+
 	root->type = type;
 	root->line = line;
 

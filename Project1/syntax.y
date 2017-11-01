@@ -67,141 +67,141 @@
 
 /* High-level Definitions */
 Program	: ExtDefList { 
-			$$ = init("Program", TYPE_KEYWORD, @$.first_line);
+			$$ = init("Program", "", TYPE_KEYWORD, @$.first_line);
 			insert($$, $1);
 			tree = $$;
 		}
 		;
 ExtDefList	: ExtDef ExtDefList{
-		   		$$ = init("ExtDefList", TYPE_KEYWORD, @$.first_line);
+		   		$$ = init("ExtDefList", "", TYPE_KEYWORD, @$.first_line);
 				insert($$,$1);insert($$,$2);
 			}
 		   	| /* empty */{ $$=NULL; }
 			;
 ExtDef	: Specifier ExtDecList SEMI{
-	   		$$ = init("ExtDef", TYPE_KEYWORD, @$.first_line);
+	   		$$ = init("ExtDef", "", TYPE_KEYWORD, @$.first_line);
 			insert($$,$1);insert($$,$2);insert($$,$3);
 		}
 		| Specifier SEMI{
-	   		$$ = init("ExtDef", TYPE_KEYWORD, @$.first_line);
+	   		$$ = init("ExtDef", "", TYPE_KEYWORD, @$.first_line);
 			insert($$,$1);insert($$,$2);
 		}
 		| Specifier FunDec CompSt{
-	   		$$ = init("ExtDef", TYPE_KEYWORD, @$.first_line);
+	   		$$ = init("ExtDef", "", TYPE_KEYWORD, @$.first_line);
 			insert($$,$1);insert($$,$2);insert($$,$3);
 		}
 		;
 ExtDecList	: VarDec{
-		   		$$ = init("ExtDecList", TYPE_KEYWORD, @$.first_line);
+		   		$$ = init("ExtDecList", "", TYPE_KEYWORD, @$.first_line);
 				insert($$, $1);
 			}
 		    | VarDec COMMA ExtDecList{
-	   			$$ = init("ExtDecList", TYPE_KEYWORD, @$.first_line);
+	   			$$ = init("ExtDecList", "", TYPE_KEYWORD, @$.first_line);
 				insert($$,$1);insert($$,$2);insert($$,$3);
 			}
 			;
 
 /* Specifiers */
 Specifier	: TYPE{
-		  		$$ = init("Specifier", TYPE_KEYWORD, @$.first_line);
+		  		$$ = init("Specifier", "", TYPE_KEYWORD, @$.first_line);
 				insert($$,$1);
 			}
 		  	| StructSpecifier{
-				$$ = init("StructSpecifier", TYPE_KEYWORD, @$.first_line);
+				$$ = init("StructSpecifier", "", TYPE_KEYWORD, @$.first_line);
 				insert($$,$1);
 			}
 			;
 StructSpecifier	: STRUCT OptTag LC DefList RC{
-					$$ = init("StructSpecifier", TYPE_KEYWORD, @$.first_line);
+					$$ = init("StructSpecifier", "", TYPE_KEYWORD, @$.first_line);
 					insert($$,$1);insert($$,$2);insert($$,$3);insert($$,$4);insert($$,$5);
 				}
 				| STRUCT Tag{
-					$$ = init("StructSpecifier", TYPE_KEYWORD, @$.first_line);
+					$$ = init("StructSpecifier", "", TYPE_KEYWORD, @$.first_line);
 					insert($$,$1);insert($$,$2);
 				}
 				;
 OptTag	: ID{
-			$$ = init("OptTag", TYPE_KEYWORD, @$.first_line);
+			$$ = init("OptTag", "", TYPE_KEYWORD, @$.first_line);
 			insert($$,$1);
 		}
 	    | /* empty */{ $$=NULL; }
 		;
 Tag	: ID{
-		$$ = init("Tag", TYPE_KEYWORD, @$.first_line);
+		$$ = init("Tag", "", TYPE_KEYWORD, @$.first_line);
 		insert($$,$1);
 	}
 	;
 
 /* Declarators */
 VarDec : ID{
-			$$ = init("VarDec", TYPE_KEYWORD, @$.first_line);
+			$$ = init("VarDec", "", TYPE_KEYWORD, @$.first_line);
 			insert($$,$1);
 		}
 	   | VarDec LB INT RB{
-			$$ = init("VarDec", TYPE_KEYWORD, @$.first_line);
+			$$ = init("VarDec", "", TYPE_KEYWORD, @$.first_line);
 			insert($$,$1);insert($$,$2);insert($$,$3);insert($$,$4);
 		}
 	   ;
 FunDec	: ID LP VarList RP{
-			$$ = init("FunDec", TYPE_KEYWORD, @$.first_line);
+			$$ = init("FunDec", "", TYPE_KEYWORD, @$.first_line);
 			insert($$,$1);insert($$,$2);insert($$,$3);insert($$,$4);
 		}
 	   	| ID LP RP{
-			$$ = init("FunDec", TYPE_KEYWORD, @$.first_line);
+			$$ = init("FunDec", "", TYPE_KEYWORD, @$.first_line);
 			insert($$,$1);insert($$,$2);insert($$,$3);
 		}
 		;
 VarList	: ParamDec COMMA VarList{
-			$$ = init("VarList", TYPE_KEYWORD, @$.first_line);
+			$$ = init("VarList", "", TYPE_KEYWORD, @$.first_line);
 			insert($$,$1);insert($$,$2);insert($$,$3);
 		}
 		| ParamDec{
-			$$ = init("VarList", TYPE_KEYWORD, @$.first_line);
+			$$ = init("VarList", "", TYPE_KEYWORD, @$.first_line);
 			insert($$,$1);
 		}
 		;
 ParamDec	: Specifier VarDec{
-				$$ = init("ParamDec", TYPE_KEYWORD, @$.first_line);
+				$$ = init("ParamDec", "", TYPE_KEYWORD, @$.first_line);
 				insert($$,$1);insert($$,$2);
 			}
 		 	;
 
 /* Statements */
 CompSt	: LC DefList StmtList RC{
-			$$ = init("CompSt", TYPE_KEYWORD, @$.first_line);
+			$$ = init("CompSt", "", TYPE_KEYWORD, @$.first_line);
 			insert($$,$1);insert($$,$2);insert($$,$3);insert($$,$4);
 		}
 	   	;
 StmtList	: Stmt StmtList{
-				$$ = init("StmtList", TYPE_KEYWORD, @$.first_line);
+				$$ = init("StmtList", "", TYPE_KEYWORD, @$.first_line);
 				insert($$,$1);insert($$,$2);
 			}
 		 	| /* empty */{ $$ = NULL; }
 			;
 Stmt	: Exp SEMI{ 
-			$$ = init("Stmt", TYPE_KEYWORD, @$.first_line);
+			$$ = init("Stmt", "", TYPE_KEYWORD, @$.first_line);
 			insert($$,$1);insert($$,$2);
 		}
 	 	| CompSt{
-			$$ = init("Stmt", TYPE_KEYWORD, @$.first_line);
+			$$ = init("Stmt", "", TYPE_KEYWORD, @$.first_line);
 			insert($$,$1);
 		}
 		| RETURN Exp SEMI{
-			$$ = init("Stmt", TYPE_KEYWORD, @$.first_line);
+			$$ = init("Stmt", "", TYPE_KEYWORD, @$.first_line);
 			insert($$,$1);insert($$,$2);insert($$,$3);
 		}
 		| IF LP Exp RP Stmt %prec LOWER_THAN_ELSE{
-			$$ = init("Stmt", TYPE_KEYWORD, @$.first_line);
+			$$ = init("Stmt", "", TYPE_KEYWORD, @$.first_line);
 			insert($$,$1);insert($$,$2);insert($$,$3);
 			insert($$,$4);insert($$,$5);
 		}
 		| IF LP Exp RP Stmt ELSE Stmt{
-			$$ = init("Stmt", TYPE_KEYWORD, @$.first_line);
+			$$ = init("Stmt", "", TYPE_KEYWORD, @$.first_line);
 			insert($$,$1);insert($$,$2);insert($$,$3);
 			insert($$,$4);insert($$,$5);insert($$,$6);insert($$,$7);
 		}
 		| WHILE LP Exp RP Stmt{
-			$$ = init("Stmt", TYPE_KEYWORD, @$.first_line);
+			$$ = init("Stmt", "", TYPE_KEYWORD, @$.first_line);
 			insert($$,$1);insert($$,$2);insert($$,$3);
 			insert($$,$4);insert($$,$5);
 		}
@@ -209,114 +209,114 @@ Stmt	: Exp SEMI{
 
 /* Local Definitions */
 DefList	: Def DefList{
-			$$ = init("DefList", TYPE_KEYWORD, @$.first_line);
+			$$ = init("DefList", "", TYPE_KEYWORD, @$.first_line);
 			insert($$,$1);insert($$,$2);
 		}
 		| /* empty */{ $$=NULL; }
 		;
 Def	: Specifier DecList SEMI{
-		$$ = init("Def", TYPE_KEYWORD, @$.first_line);
+		$$ = init("Def", "", TYPE_KEYWORD, @$.first_line);
 		insert($$,$1);insert($$,$2);insert($$,$3);
 	}
 	;
 DecList	: Dec{
-			$$ = init("DecList", TYPE_KEYWORD, @$.first_line);
+			$$ = init("DecList", "", TYPE_KEYWORD, @$.first_line);
 			insert($$,$1);
 		}
 		| Dec COMMA DecList{
-			$$ = init("DecList", TYPE_KEYWORD, @$.first_line);
+			$$ = init("DecList", "", TYPE_KEYWORD, @$.first_line);
 			insert($$,$1);insert($$,$2);insert($$,$3);
 		}
 		;
 Dec	: VarDec{
-		$$ = init("Dec", TYPE_KEYWORD, @$.first_line);
+		$$ = init("Dec", "", TYPE_KEYWORD, @$.first_line);
 		insert($$,$1);
 	}
 	| VarDec ASSIGNOP Exp{
-		$$ = init("Dec", TYPE_KEYWORD, @$.first_line);
+		$$ = init("Dec", "", TYPE_KEYWORD, @$.first_line);
 		insert($$,$1);insert($$,$2);insert($$,$3);
 	}
 
 /* Expressions */
 Exp	: Exp ASSIGNOP Exp{
-		$$ = init("Exp", TYPE_KEYWORD, @$.first_line);
+		$$ = init("Exp", "", TYPE_KEYWORD, @$.first_line);
 		insert($$,$1);insert($$,$2);insert($$,$3);
 	}
 	| Exp AND Exp{
-		$$ = init("Exp", TYPE_KEYWORD, @$.first_line);
+		$$ = init("Exp", "", TYPE_KEYWORD, @$.first_line);
 		insert($$,$1);
 	}
 	| Exp OR Exp{
-		$$ = init("Exp", TYPE_KEYWORD, @$.first_line);
+		$$ = init("Exp", "", TYPE_KEYWORD, @$.first_line);
 		insert($$,$1);insert($$,$2);insert($$,$3);
 	}
 	| Exp RELOP Exp{
-		$$ = init("Exp", TYPE_KEYWORD, @$.first_line);
+		$$ = init("Exp", "", TYPE_KEYWORD, @$.first_line);
 		insert($$,$1);insert($$,$2);insert($$,$3);
 	}
 	| Exp PLUS Exp{
-		$$ = init("Exp", TYPE_KEYWORD, @$.first_line);
+		$$ = init("Exp", "", TYPE_KEYWORD, @$.first_line);
 		insert($$,$1);insert($$,$2);insert($$,$3);
 	}
 	| Exp MINUS Exp{
-		$$ = init("Exp", TYPE_KEYWORD, @$.first_line);
+		$$ = init("Exp", "", TYPE_KEYWORD, @$.first_line);
 		insert($$,$1);insert($$,$2);insert($$,$3);
 	}
 	| Exp STAR Exp{
-		$$ = init("Exp", TYPE_KEYWORD, @$.first_line);
+		$$ = init("Exp", "", TYPE_KEYWORD, @$.first_line);
 		insert($$,$1);insert($$,$2);insert($$,$3);
 	}
 	| Exp DIV Exp{
-		$$ = init("Exp", TYPE_KEYWORD, @$.first_line);
+		$$ = init("Exp", "", TYPE_KEYWORD, @$.first_line);
 		insert($$,$1);insert($$,$2);insert($$,$3);
 	}
 	| LP Exp RP{
-		$$ = init("Exp", TYPE_KEYWORD, @$.first_line);
+		$$ = init("Exp", "", TYPE_KEYWORD, @$.first_line);
 		insert($$,$1);insert($$,$2);insert($$,$3);
 	}
 	| MINUS Exp{
-		$$ = init("Exp", TYPE_KEYWORD, @$.first_line);
+		$$ = init("Exp", "", TYPE_KEYWORD, @$.first_line);
 		insert($$,$1);insert($$,$2);
 	}
 	| NOT Exp{
-		$$ = init("Exp", TYPE_KEYWORD, @$.first_line);
+		$$ = init("Exp", "", TYPE_KEYWORD, @$.first_line);
 		insert($$,$1);insert($$,$2);
 	}
 	| ID LP Args RP{
-		$$ = init("Exp", TYPE_KEYWORD, @$.first_line);
+		$$ = init("Exp", "", TYPE_KEYWORD, @$.first_line);
 		insert($$,$1);insert($$,$2);insert($$,$3);insert($$,$4);
 	}
 	| ID LP RP{
-		$$ = init("Exp", TYPE_KEYWORD, @$.first_line);
+		$$ = init("Exp", "", TYPE_KEYWORD, @$.first_line);
 		insert($$,$1);insert($$,$2);insert($$,$3);
 	}
 	| Exp LB Exp RB{
-		$$ = init("Exp", TYPE_KEYWORD, @$.first_line);
+		$$ = init("Exp", "", TYPE_KEYWORD, @$.first_line);
 		insert($$,$1);insert($$,$2);insert($$,$3);insert($$,$4);
 	}
 	| Exp DOT ID{
-		$$ = init("Exp", TYPE_KEYWORD, @$.first_line);
+		$$ = init("Exp", "", TYPE_KEYWORD, @$.first_line);
 		insert($$,$1);insert($$,$2);insert($$,$3);
 	}
 	| ID{
-		$$ = init("Exp", TYPE_KEYWORD, @$.first_line);
+		$$ = init("Exp", "", TYPE_KEYWORD, @$.first_line);
 		insert($$,$1);
 	}
 	| INT{
-		$$ = init("Exp", TYPE_KEYWORD, @$.first_line);
+		$$ = init("Exp", "", TYPE_KEYWORD, @$.first_line);
 		insert($$,$1);
 	}
 	| FLOAT{
-		$$ = init("Exp", TYPE_KEYWORD, @$.first_line);
+		$$ = init("Exp", "", TYPE_KEYWORD, @$.first_line);
 		insert($$,$1);
 	}
 	;
 Args	: Exp COMMA Args{
-			$$ = init("Args", TYPE_KEYWORD, @$.first_line);
+			$$ = init("Args", "", TYPE_KEYWORD, @$.first_line);
 			insert($$,$1);insert($$,$2);insert($$,$3);
 		}
 	 	| Exp{
-			$$ = init("Args", TYPE_KEYWORD, @$.first_line);
+			$$ = init("Args", "", TYPE_KEYWORD, @$.first_line);
 			insert($$,$1);
 		}
 		;

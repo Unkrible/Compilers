@@ -2,7 +2,7 @@
 #include "parse.h"
 
 Node *tree;
-
+int errorFlag;
 int main(int argc, char** argv){
 	if(argc <= 1)
 			return 1;
@@ -11,9 +11,12 @@ int main(int argc, char** argv){
 		perror(argv[1]);
 		return 1;
 	}
-	
+
+
+	tree = NULL;	
+	errorFlag = 0;
+	yylineno = 1;
 	yyrestart(f);
-	yylineno = 0;
 	yyparse();
 
 	return 0;
