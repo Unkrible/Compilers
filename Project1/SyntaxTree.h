@@ -8,12 +8,21 @@
 #define VALUE_LENGTH 32
 
 #define TYPE_KEYWORD 0
-#define TYPE_ID 1
-#define TYPE_INT 2
-#define TYPE_FLOAT 3
-#define TYPE_STRING 4
-#define TYPE_OCT 5
-#define TYPE_HEX 6
+#define TYPE_KEYWORD_RELOP 1
+#define TYPE_KEYWORD_BRACKET 2
+
+#define TYPE_NONTERMINAL 65536
+
+#define TYPE_ID 128
+
+#define TYPE_INT 256
+#define TYPE_OCT 257
+#define TYPE_HEX 258
+
+#define TYPE_FLOAT 512
+
+#define TYPE_STRING 1024
+
 extern int yylineno;
 
 typedef int Type;

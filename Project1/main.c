@@ -19,6 +19,7 @@ int main(int argc, char** argv){
 	yyrestart(f);
 	yyparse();
 
+	traverseTree(tree);
 	return 0;
 
 }

@@ -34,11 +34,6 @@ LINE		[\n]
 
 {WS}	{ /* tabs */ }
 
-{INT}	{ 
-			yylval.type_node = init("INT",yytext,TYPE_INT,yylineno);
-			return INT;
-		}
-
 {OCT}	{ 
 			yylval.type_node = init("INT",yytext,TYPE_OCT,yylineno);
 			return INT;
@@ -49,14 +44,14 @@ LINE		[\n]
 			return INT;
 		}
 
+{INT}	{ 
+			yylval.type_node = init("INT",yytext,TYPE_INT,yylineno);
+			return INT;
+		}
+
 {FLOAT}	{ 
 			yylval.type_node = init("FLOAT",yytext,TYPE_FLOAT,yylineno);
 			return FLOAT;
-		}
-
-{ID}	{ 
-			yylval.type_node = init("ID",yytext,TYPE_ID,yylineno);
-			return ID;
 		}
 
 ";"		{ 
@@ -76,7 +71,7 @@ LINE		[\n]
 		}
 
 {RELOP}	{ 
-			yylval.type_node = init("RELOP",yytext,TYPE_KEYWORD,yylineno);
+			yylval.type_node = init("RELOP",yytext,TYPE_KEYWORD_RELOP,yylineno);
 			return RELOP;
 		}
 
@@ -126,32 +121,32 @@ LINE		[\n]
 				}
 
 "("		{ 
-			yylval.type_node = init("LP",yytext,TYPE_KEYWORD,yylineno);
+			yylval.type_node = init("LP",yytext,TYPE_KEYWORD_BRACKET,yylineno);
 			return LP;
 		}
 
 ")"		{ 
-			yylval.type_node = init("RP",yytext,TYPE_KEYWORD,yylineno);
+			yylval.type_node = init("RP",yytext,TYPE_KEYWORD_BRACKET,yylineno);
 			return RP;
 		}
 
 "["		{ 
-			yylval.type_node = init("SEMI",yytext,TYPE_KEYWORD,yylineno);
+			yylval.type_node = init("LB",yytext,TYPE_KEYWORD_BRACKET,yylineno);
 			return LB;
 		}
 
 "]"		{ 
-			yylval.type_node = init("RB",yytext,TYPE_KEYWORD,yylineno);
+			yylval.type_node = init("RB",yytext,TYPE_KEYWORD_BRACKET,yylineno);
 			return RB;
 		}
 
 "{"		{ 
-			yylval.type_node = init("LC",yytext,TYPE_KEYWORD,yylineno);
+			yylval.type_node = init("LC",yytext,TYPE_KEYWORD_BRACKET,yylineno);
 			return LC;
 		}
 
 "}"		{ 
-			yylval.type_node = init("RC",yytext,TYPE_KEYWORD,yylineno);
+			yylval.type_node = init("RC",yytext,TYPE_KEYWORD_BRACKET,yylineno);
 			return RC;
 		}
 
@@ -182,6 +177,11 @@ LINE		[\n]
 
 {LINE}	{
 			yycolumn = 1; 
+		}
+
+{ID}	{ 
+			yylval.type_node = init("ID",yytext,TYPE_ID,yylineno);
+			return ID;
 		}
 
 
