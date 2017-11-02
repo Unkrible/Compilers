@@ -24,4 +24,9 @@ extern int yylineno;
  */
 extern Node* tree;
 
+/*
+ * main
+ */
+extern int errorFlag;
+
 #endif

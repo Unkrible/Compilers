@@ -49,7 +49,9 @@ void traverseTree(Node* p){
 			printf("%s (%d)\n",p->identifier,p->line);
 			break;
 		case TYPE_KEYWORD_BRACKET:
-			// LP|RP|LB|RB|LC|RC
+		case TYPE_KEYWORD_PUNCTUATION:
+		case TYPE_KEYWORD_OPERATOR:
+			// LP|RP|LB|RB|LC|RC|PUNCUTATION|OPERATOR
 			printf("%s\n",p->identifier);
 			break;
 		default:

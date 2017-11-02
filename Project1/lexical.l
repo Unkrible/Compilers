@@ -4,6 +4,8 @@
 	#include "SyntaxTree.h"
 	#include "syntax.tab.h"
 
+	extern int errorFlag;
+	
 	int yycolumn = 1;
 	/* define YY_USER_ACTION */
 	#define YY_USER_ACTION \
@@ -34,39 +36,19 @@ LINE		[\n]
 
 {WS}	{ /* tabs */ }
 
-{OCT}	{ 
-			yylval.type_node = init("INT",yytext,TYPE_OCT,yylineno);
-			return INT;
-		}
-
-{HEX}	{ 
-			yylval.type_node = init("INT",yytext,TYPE_HEX,yylineno);
-			return INT;
-		}
-
-{INT}	{ 
-			yylval.type_node = init("INT",yytext,TYPE_INT,yylineno);
-			return INT;
-		}
-
-{FLOAT}	{ 
-			yylval.type_node = init("FLOAT",yytext,TYPE_FLOAT,yylineno);
-			return FLOAT;
-		}
-
 ";"		{ 
-			yylval.type_node = init("SEMI",yytext,TYPE_KEYWORD,yylineno);
+			yylval.type_node = init("SEMI",yytext,TYPE_KEYWORD_PUNCTUATION,yylineno);
 			return SEMI;
 		}
 
 ","		{ 
-			yylval.type_node = init("COMMA",yytext,TYPE_KEYWORD,yylineno);
+			yylval.type_node = init("COMMA",yytext,TYPE_KEYWORD_PUNCTUATION,yylineno);
 			return COMMA;
 		}
 
 
 "="		{ 
-			yylval.type_node = init("ASSIGNOP",yytext,TYPE_KEYWORD,yylineno);
+			yylval.type_node = init("ASSIGNOP",yytext,TYPE_KEYWORD_OPERATOR,yylineno);
 			return ASSIGNOP;
 		}
 
@@ -76,42 +58,42 @@ LINE		[\n]
 		}
 
 "+"		{ 
-			yylval.type_node = init("PLUS",yytext,TYPE_KEYWORD,yylineno);
+			yylval.type_node = init("PLUS",yytext,TYPE_KEYWORD_OPERATOR,yylineno);
 			return PLUS;
 		}
 
 "-"		{ 
-			yylval.type_node = init("MINUS",yytext,TYPE_KEYWORD,yylineno);
+			yylval.type_node = init("MINUS",yytext,TYPE_KEYWORD_OPERATOR,yylineno);
 			return MINUS;
 		}
 
 "*"		{ 
-			yylval.type_node = init("STAR",yytext,TYPE_KEYWORD,yylineno);
+			yylval.type_node = init("STAR",yytext,TYPE_KEYWORD_OPERATOR,yylineno);
 			return STAR;
 		}
 
 "/"		{ 
-			yylval.type_node = init("DIV",yytext,TYPE_KEYWORD,yylineno);
+			yylval.type_node = init("DIV",yytext,TYPE_KEYWORD_OPERATOR,yylineno);
 			return DIV;
 		}
 
 "&&"	{ 
-			yylval.type_node = init("AND",yytext,TYPE_KEYWORD,yylineno);
+			yylval.type_node = init("AND",yytext,TYPE_KEYWORD_OPERATOR,yylineno);
 			return AND;
 		}
 
 "||"	{ 
-			yylval.type_node = init("OR",yytext,TYPE_KEYWORD,yylineno);
+			yylval.type_node = init("OR",yytext,TYPE_KEYWORD_OPERATOR,yylineno);
 			return OR;
 		}
 
 "!"		{ 
-			yylval.type_node = init("NOT",yytext,TYPE_KEYWORD,yylineno);
+			yylval.type_node = init("NOT",yytext,TYPE_KEYWORD_OPERATOR,yylineno);
 			return NOT;
 		}
 
 "."		{
-			yylval.type_node = init("DOT",yytext,TYPE_KEYWORD,yylineno);
+			yylval.type_node = init("DOT",yytext,TYPE_KEYWORD_PUNCTUATION,yylineno);
 			return DOT;
 		}
 
@@ -175,6 +157,25 @@ LINE		[\n]
 			return WHILE;
 		}
 
+{OCT}	{ 
+			yylval.type_node = init("INT",yytext,TYPE_OCT,yylineno);
+			return INT;
+		}
+
+{HEX}	{ 
+			yylval.type_node = init("INT",yytext,TYPE_HEX,yylineno);
+			return INT;
+		}
+
+{INT}	{ 
+			yylval.type_node = init("INT",yytext,TYPE_INT,yylineno);
+			return INT;
+		}
+
+{FLOAT}	{ 
+			yylval.type_node = init("FLOAT",yytext,TYPE_FLOAT,yylineno);
+			return FLOAT;
+		}
 {LINE}	{
 			yycolumn = 1; 
 		}
@@ -188,6 +189,7 @@ LINE		[\n]
 . 		{ 
 			printf("Error type A at line %d: Mysterious character \'%s\'\n"
 			, yylineno, yytext); 
+			errorFlag = 1;
 		}
 
 

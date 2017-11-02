@@ -18,8 +18,9 @@ int main(int argc, char** argv){
 	yylineno = 1;
 	yyrestart(f);
 	yyparse();
-
-	traverseTree(tree);
+	
+	if(errorFlag == 0)
+		traverseTree(tree);
 	
 	cleanTree(tree);
 	return 0;
