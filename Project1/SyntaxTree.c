@@ -3,7 +3,8 @@
 
 Node* init(char identifier[], char value[], Type type, int line){
 	Node* root = malloc(sizeof(Node));
-	
+
+	root->height = 0;	
 	strcpy(root->identifier, identifier);
 	
 	if(value != NULL)
@@ -39,6 +40,9 @@ void traverseTree(Node* p){
 			return;
 
 	// Print Node
+
+	for(int i=0; i<p->height; i++)
+			printf(" ");
 	switch(p->type){
 		case TYPE_NONTERMINAL:
 			// non-terminals	
@@ -54,7 +58,21 @@ void traverseTree(Node* p){
 			break;
 	}
 
+	if(p->child != NULL)
+		p->child->height = p->height+1;
+	if(p->sibling != NULL)
+		p->sibling->height = p->height;
 	traverseTree(p->child);
 	traverseTree(p->sibling);
 
 }
+
+void cleanTree(Node *p){
+	if(p==NULL)
+		return;
+
+	cleanTree(p->child);
+	cleanTree(p->sibling);
+	free(p);
+}
+

@@ -34,7 +34,8 @@ typedef struct Node{
 	char value[VALUE_LENGTH];
 	Type type;
 	int line;
-	
+	int height;
+
 	// Children Brother Express
 	struct Node *child;
 	struct Node *sibling;
@@ -44,5 +45,5 @@ typedef struct Node{
 extern Node* init(char identifier[], char value[], Type type, int line);
 extern void insert(Node *p, Node *child);
 extern void traverseTree(Node *p);
-
+extern void cleanTree(Node *p);
 #endif

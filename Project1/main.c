@@ -20,6 +20,8 @@ int main(int argc, char** argv){
 	yyparse();
 
 	traverseTree(tree);
+	
+	cleanTree(tree);
 	return 0;
 
 }
