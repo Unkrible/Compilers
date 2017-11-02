@@ -48,6 +48,12 @@ void traverseTree(Node* p){
 			// non-terminals	
 			printf("%s (%d)\n",p->identifier,p->line);
 			break;
+		case TYPE_OCT:
+			printf("%s: %d\n",p->identifier,(int)strtol(p->value,NULL,8));
+			break;
+		case TYPE_HEX:
+			printf("%s: %d\n",p->identifier,(int)strtol(p->value,NULL,16));
+			break;
 		case TYPE_KEYWORD_BRACKET:
 		case TYPE_KEYWORD_PUNCTUATION:
 		case TYPE_KEYWORD_OPERATOR:

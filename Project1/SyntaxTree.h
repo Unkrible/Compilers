@@ -22,6 +22,7 @@
 #define TYPE_HEX 258
 
 #define TYPE_FLOAT 512
+#define TYPE_SFLOAT 513
 
 #define TYPE_STRING 1024
 

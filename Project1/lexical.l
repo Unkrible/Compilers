@@ -18,23 +18,31 @@
 
 %option yylineno
 
-DELIM		[ \t]
+DELIM	[ \t]
 WS		{DELIM}+
-DIGIT		[0-9]
-LETTER		[A-Za-z]
+DIGIT	[0-9]
+LETTER	[A-Za-z]
 INT		0|([1-9]{DIGIT}*)
 OCT		0([0-7]+)
 HEX		0(x|X)[0-9a-fA-F]+
-FLOAT		{INT}(\.{DIGIT}+)?
-RELOP 		>|<|>=|<=|==|!=
+FLOAT	{INT}(\.{DIGIT}+)?
+SFLOAT	((INT\.{DIGIT}*)|({DIGIT}*\.{DIGIT}+))[Ee][+-]?{DIGIT}+
+RELOP 	>|<|>=|<=|==|!=
 ID		({LETTER}|_)({LETTER}|{DIGIT}|_)*
-LINE		[\n]
+LINE	[\n]
 
 
 %%
 
 
 {WS}	{ /* tabs */ }
+
+"/*"([^\*]|(\*)*[^\*/])*(\*)*"*/"	{  /* C comments */ }
+
+"//"	{ 
+			/* C++ comment */ 
+			while(input() != '\n');
+		}
 
 ";"		{ 
 			yylval.type_node = init("SEMI",yytext,TYPE_KEYWORD_PUNCTUATION,yylineno);
@@ -167,6 +175,11 @@ LINE		[\n]
 			return INT;
 		}
 
+{SFLOAT}	{
+				yylval.type_node = init("FLOAT",yytext,TYPE_SFLOAT,yylineno);
+				return FLOAT;	
+			}
+
 {INT}	{ 
 			yylval.type_node = init("INT",yytext,TYPE_INT,yylineno);
 			return INT;
@@ -176,6 +189,7 @@ LINE		[\n]
 			yylval.type_node = init("FLOAT",yytext,TYPE_FLOAT,yylineno);
 			return FLOAT;
 		}
+
 {LINE}	{
 			yycolumn = 1; 
 		}
