@@ -29,6 +29,7 @@ HEX		0(x|X)[0-9a-fA-F]+
 HEX_ERROR	[0][Xx][0-9A-Za-z]*
 FLOAT	{INT}(\.{DIGIT}+)?
 SFLOAT	((INT\.{DIGIT}*)|({DIGIT}*\.{DIGIT}+))[Ee][+-]?{DIGIT}+
+SFLOAT_ERROR	((INT\.{DIGIT}*)|({DIGIT}*\.{DIGIT}+))[Ee][+-]?([0-9A-Za-z]*)
 RELOP 	>|<|>=|<=|==|!=
 ID		({LETTER}|_)({LETTER}|{DIGIT}|_)*
 LINE	[\n]
@@ -190,6 +191,11 @@ LINE	[\n]
 {SFLOAT}	{
 				yylval.type_node = init("FLOAT",yytext,TYPE_SFLOAT,yylineno);
 				return FLOAT;	
+			}
+
+{SFLOAT_ERROR}	{
+				printf("Error type A at line %d: Illegal floating point number \'%s\'\n", yylineno, yytext); 
+				errorLexFlag = 1;
 			}
 
 {INT}	{ 
