@@ -4,7 +4,7 @@
 	#include "SyntaxTree.h"
 	#include "syntax.tab.h"
 
-	extern int errorFlag;
+	extern int errorLexFlag;
 	
 	int yycolumn = 1;
 	/* define YY_USER_ACTION */
@@ -24,7 +24,9 @@ DIGIT	[0-9]
 LETTER	[A-Za-z]
 INT		0|([1-9]{DIGIT}*)
 OCT		0([0-7]+)
+OCT_ERROR	0[0-9A-WYZa-wyz][0-9A-Za-z]*
 HEX		0(x|X)[0-9a-fA-F]+
+HEX_ERROR	[0][Xx][0-9A-Za-z]*
 FLOAT	{INT}(\.{DIGIT}+)?
 SFLOAT	((INT\.{DIGIT}*)|({DIGIT}*\.{DIGIT}+))[Ee][+-]?{DIGIT}+
 RELOP 	>|<|>=|<=|==|!=
@@ -170,10 +172,20 @@ LINE	[\n]
 			return INT;
 		}
 
+{OCT_ERROR}	{ 
+				printf("Error type A at line %d: Illegal octal number \'%s\'\n", yylineno, yytext); 
+				errorLexFlag = 1;
+			}
+
 {HEX}	{ 
 			yylval.type_node = init("INT",yytext,TYPE_HEX,yylineno);
 			return INT;
 		}
+
+{HEX_ERROR}	{ 
+				printf("Error type A at line %d: Illegal hexadecimal number \'%s\'\n", yylineno, yytext); 
+				errorLexFlag = 1;
+			}
 
 {SFLOAT}	{
 				yylval.type_node = init("FLOAT",yytext,TYPE_SFLOAT,yylineno);
@@ -203,7 +215,7 @@ LINE	[\n]
 . 		{ 
 			printf("Error type A at line %d: Mysterious character \'%s\'\n"
 			, yylineno, yytext); 
-			errorFlag = 1;
+			errorLexFlag = 1;
 		}
 
 
@@ -211,7 +223,7 @@ LINE	[\n]
 
 /*
 int main(int argc, char** argv){
-	if (argc > 1){
+	if (argc > 1)
 		if (!(yyin = fopen(argv[1], "r"))){
 			perror(argv[1]);
 			return 1;

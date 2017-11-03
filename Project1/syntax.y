@@ -90,7 +90,7 @@ ExtDef	: Specifier ExtDecList SEMI{
 	   		$$ = init("ExtDef", NULL, TYPE_NONTERMINAL, @$.first_line);
 			insert($$,$1);insert($$,$2);insert($$,$3);
 		}
-		| error SEMI { errorFlag=2; }
+		| error SEMI { errorSyntaxFlag=2; }
 		;
 ExtDecList	: VarDec{
 		   		$$ = init("ExtDecList", NULL, TYPE_NONTERMINAL, @$.first_line);
@@ -151,7 +151,7 @@ FunDec	: ID LP VarList RP{
 			$$ = init("FunDec", NULL, TYPE_NONTERMINAL, @$.first_line);
 			insert($$,$1);insert($$,$2);insert($$,$3);
 		}
-		| error RP{ errorFlag=2; }
+		| error RP{ errorSyntaxFlag=2; }
 		;
 VarList	: ParamDec COMMA VarList{
 			$$ = init("VarList", NULL, TYPE_NONTERMINAL, @$.first_line);
@@ -173,7 +173,7 @@ CompSt	: LC DefList StmtList RC{
 			$$ = init("CompSt", NULL, TYPE_NONTERMINAL, @$.first_line);
 			insert($$,$1);insert($$,$2);insert($$,$3);insert($$,$4);
 		}
-		| LC error RC{ errorFlag=2; }
+		| LC error RC{ errorSyntaxFlag=2; }
 	   	;
 StmtList	: Stmt StmtList{
 				$$ = init("StmtList", NULL, TYPE_NONTERMINAL, @$.first_line);
@@ -208,7 +208,7 @@ Stmt	: Exp SEMI{
 			insert($$,$1);insert($$,$2);insert($$,$3);
 			insert($$,$4);insert($$,$5);
 		}
-		| error SEMI { errorFlag=2; }
+		| error SEMI { errorSyntaxFlag=2; }
 		;
 
 /* Local Definitions */
@@ -222,7 +222,7 @@ Def	: Specifier DecList SEMI{
 		$$ = init("Def", NULL, TYPE_NONTERMINAL, @$.first_line);
 		insert($$,$1);insert($$,$2);insert($$,$3);
 	}
-	| error SEMI{ errorFlag=2; }
+	| error SEMI{ errorSyntaxFlag=2; }
 	;
 DecList	: Dec{
 			$$ = init("DecList", NULL, TYPE_NONTERMINAL, @$.first_line);
@@ -315,7 +315,7 @@ Exp	: Exp ASSIGNOP Exp{
 		$$ = init("Exp", NULL, TYPE_NONTERMINAL, @$.first_line);
 		insert($$,$1);
 	}
-	| Exp LB error RB{ errorFlag=2; }
+	| Exp LB error RB{ errorSyntaxFlag=2; }
 	;
 Args	: Exp COMMA Args{
 			$$ = init("Args", NULL, TYPE_NONTERMINAL, @$.first_line);
@@ -333,5 +333,6 @@ Args	: Exp COMMA Args{
 
 
 void yyerror(char* msg){
-	fprintf(stderr, "Error type B at Line %d:  %s\n",yylineno,msg);
+	if(errorLexFlag==0)
+		fprintf(stderr, "Error type B at Line %d:  %s\n",yylineno,msg);
 }

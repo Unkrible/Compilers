@@ -27,6 +27,7 @@ extern Node* tree;
 /*
  * main
  */
-extern int errorFlag;
+extern int errorLexFlag;
+extern int errorSyntaxFlag;
 
 #endif

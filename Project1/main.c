@@ -2,7 +2,9 @@
 #include "parse.h"
 
 Node *tree;
-int errorFlag;
+int errorLexFlag;
+int errorSyntaxFlag;
+
 int main(int argc, char** argv){
 	if(argc <= 1)
 			return 1;
@@ -14,12 +16,13 @@ int main(int argc, char** argv){
 
 
 	tree = NULL;	
-	errorFlag = 0;
+	errorLexFlag = 0;
+	errorSyntaxFlag = 0;
 	yylineno = 1;
 	yyrestart(f);
 	yyparse();
 	
-	if(errorFlag == 0)
+	if(errorLexFlag == 0 && errorSyntaxFlag==0)
 		traverseTree(tree);
 	
 	cleanTree(tree);
