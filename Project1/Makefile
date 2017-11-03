@@ -5,13 +5,11 @@ parser:
 	gcc main.c syntax.tab.c SyntaxTree.c lex.o -lfl -ly -o parser
 
 lexical:
+	bison -d syntax.y
 	flex lexical.l
 
 syntax:
-	bison -d synatx.y
-
-scanner:
-	gcc main.c lex.yy.c -lfl -o scanner
+	bison -d syntax.y
 
 clean:
 	rm lex.yy.c lex.o syntax.tab.c syntax.tab.h parser
