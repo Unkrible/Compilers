@@ -1,7 +1,7 @@
 #include "SyntaxTree.h"
 #include <string.h>
 
-Node* init(char identifier[], char value[], Type type, int line){
+Node* init(char identifier[], char value[], _Type type, int line){
 	Node* root = malloc(sizeof(Node));
 
 	root->height = 0;	

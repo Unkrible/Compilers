@@ -28,14 +28,14 @@
 
 extern int yylineno;
 
-typedef int Type;
+typedef int _Type;
 
 typedef struct Node{
 	//TODO: Complete Node Structure
 
 	char identifier[IDENTIFIER_LENGTH];
 	char value[VALUE_LENGTH];
-	Type type;
+	_Type type;
 	int line;
 	int height;
 
@@ -45,7 +45,7 @@ typedef struct Node{
 
 }Node;
 
-extern Node* init(char identifier[], char value[], Type type, int line);
+extern Node* init(char identifier[], char value[], _Type type, int line);
 extern void insert(Node *p, Node *child);
 extern void traverseTree(Node *p);
 extern void cleanTree(Node *p);

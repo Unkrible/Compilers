@@ -1,5 +1,7 @@
 #include "SyntaxTree.h"
 #include "parse.h"
+#include "HashTable.h"
+#include "Semantic.h"
 
 Node *tree;
 int errorLexFlag;
@@ -22,8 +24,10 @@ int main(int argc, char** argv){
 	yyrestart(f);
 	yyparse();
 	
-	if(errorLexFlag == 0 && errorSyntaxFlag==0)
-		traverseTree(tree);
+	if(errorLexFlag == 0 && errorSyntaxFlag==0){
+		initTable();
+		Program(tree);	
+	}
 	
 	cleanTree(tree);
 	return 0;
