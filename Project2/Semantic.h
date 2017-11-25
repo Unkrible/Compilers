@@ -43,7 +43,12 @@ struct Function_{
 };
 
 void Program(Node* root);
-void ExtDefList(Node* n);
+void ExtDefList(Node *n);
+void ExtDefList(Node *n, Type type);
 void ExtDef(Node *n);
+
+Type Specifier(Node *n);
+
+void VarDec(Node *n, Type type);
 
 #endif
