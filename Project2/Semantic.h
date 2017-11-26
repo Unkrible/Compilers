@@ -36,11 +36,12 @@ struct FieldList_{
 struct Function_{
 	char *name;
 	int isDefined;
-	int row;
+	int line;
 	Type retype;
 	FieldList param;
-	int num;
 };
+
+int typeEqual(Type lhs, Type rhs);
 
 void Program(Node* root);
 void ExtDefList(Node *n);
@@ -48,7 +49,22 @@ void ExtDefList(Node *n, Type type);
 void ExtDef(Node *n);
 
 Type Specifier(Node *n);
+Type StructSpecifier(Node *n);
 
-void VarDec(Node *n, Type type);
+FieldList VarDec(Node *n, Type type);
+Function FunDec(Node *n, Type type);
+FieldList VarList(Node *n, FieldList varList);
+FieldList ParamDec(Node *n);
+
+void CompSt(Node *n, Type retype);
+void StmtList(Node *n, Type retype);
+void Stmt(Node *n, Type retype);
+
+FieldList DefList(Node *n);
+FieldList Def(Node *n, FieldList defList);
+FieldList DecList(Node *n, Type type);
+FieldList Dec(Node *n, Type type);
+
+Type Exp(Node *n);
 
 #endif
