@@ -68,7 +68,6 @@ void ExtDecList(Node *n, Type type){
 }
 
 /* Specifiers */
- 
 Type Specifier(Node *n){
 	Node *child = n->child;
 	if(child == NULL)
@@ -121,11 +120,14 @@ Type StructSpecifier(Node *n){
 		else{
 			fl->name = child->child->value;
 		}
+		
+		//TODO: Error type 16
 		child = child->sibling->sibling;
 		fl->tail = DefList(child);
 	}
 	// STRUCT Tag
 	else if(strcmp(child->identifier, "Tag")==0){
+		//TODO: Error type 17
 		fl->name = child->child->value;
 		fl->tail = NULL;	
 	}
@@ -144,6 +146,7 @@ FieldList VarDec(Node *n, Type type){
 
 	// ID
 	if(strcmp(child->identifier, "ID")==0){
+		//TODO: Error type 3 15
 		varDec = (FieldList)malloc(sizeof(struct FieldList_));
 		varDec->name = child->value;
 		varDec->type = type;
@@ -167,9 +170,9 @@ FieldList VarDec(Node *n, Type type){
 			varDec->type = newType;	
 		}
 		else if(type->kind == ARRAY){
-			while((varDec->type->u.array.elem)->kind == ARRAY)
-					varDec->type = var->type->u.array.elem;
-			newType->u.arrary.elem = varDec->type;
+			while((tmpType->u.array.elem)->kind == ARRAY)
+					tmpType = tmpType->u.array.elem;
+			newType->u.arrary.elem = tmpType;
 			varDec->type = newType;
 		}
 	}
@@ -361,7 +364,7 @@ FieldList Dec(Node *n, Type type){
 }
 
 /* Expressions */
-//TODO: Complete Exp
 Type Exp(Node *n){
+	//TODO: Complete Exp
 	return NULL;
 }
