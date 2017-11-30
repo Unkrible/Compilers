@@ -364,7 +364,186 @@ FieldList Dec(Node *n, Type type){
 }
 
 /* Expressions */
-Type Exp(Node *n){
-	//TODO: Complete Exp
+Type Exp(Node *n)
+{
+	Node *child = n->child;
+	if(strcmp(child->identifier,"LP")==0){
+		//Exp->LP Exp RP
+		child = child->sibling;
+		return Exp(child);
+	}
+	else if(strcmp(child->identifier,"MINUS")==0){
+		//Exp->MINUS Exp
+		child = child->sibling;
+		Type type2 = (Type)malloc(sizeof(struct Type_));
+		type2 = Exp(child);
+		if(type2==NULL)
+			return NULL;
+		if(type2->kind!=BASIC){
+			printf("Error type 7 at line %d: Operands type mismatched\n", child->line);
+			return NULL;
+		}
+		return type2;
+	}
+	else if(strcmp(child->identifier,"NOT")==0){
+		//Exp->NOT Exp
+		child = child->sibling;
+		Type type2 = (Type)malloc(sizeof(struct Type_));
+		type2 = Exp(child);
+		if(type2==NULL)
+			return NULL;
+		if(type2->kind!=BASIC || type2->u.basic!=TYPE_INT){
+			printf("Error type 7 at line %d: Operands type mismatched\n", child->line);
+			return NULL;
+		}
+		return type2;
+	}
+	else if(strcmp(child->identifier,"ID")==0){
+		if(child->sibling==NULL){
+			//Exp->ID
+			Type id = (Type)malloc(sizeof(struct Type_));
+			id = isdefined(child->value);  //判断是否定义过
+			if(id==NULL){
+				printf("Error type 1 at line %d: Undefined variable \"%s\".\n", child->line, child->value);	
+				return NULL;
+			}
+			return id;
+		}
+		else{
+			//Exp->ID LP RP | ID LP Args RP
+			Type type = (Type)malloc(sizeof(struct Type_));
+			type = isdefined(child->value);   //判断是否定义过
+			Function func = (Function)malloc(sizeof(struct Function_));            //如何定义
+			if(type!=NULL&&func==NULL){
+				printf("Error type 11 at line %d: \"%s\" is not a function.\n", child->line, child->value);
+				return NULL;
+			}
+			if(func==NULL||func->isDefined==FALSE){
+				printf("Error type 2 at line %d: Undefined function \"%s\".\n", child->line, child->value);
+				return NULL;
+			}
+			Type param = (Type)malloc(sizeof(struct Type_));
+			param = func->retype;
+			child = child->sibling->sibling;
+			if(strcmp(child->identifier,"RP")==0){
+				if(param!=NULL){
+					printf("Error type 9 at line %d: Function \"%s\" is not applicable for arguments.\n", child->line, func->name);
+				}
+			}
+			else{
+				if(cmptype(type,param)==FALSE){  //比较两个类型是否匹配
+					printf("Error type 9 at line %d: Function \"%s\" is not applicable for arguments.\n", child->line, func->name);
+				}
+			}
+			return func->retype;
+		}
+	}
+	else if(strcmp(child->identifier,"INT")==0){
+		//Exp->INT
+		Type type = (Type)malloc(sizeof(struct Type_));
+		type->kind = BASIC;
+		type->detail.basic = TYPE_INT;
+		return type;
+	}
+	else if(strcmp(child->identifier,"FLOAT")==0){
+		//Exp->FLOAT
+		Type type = (Type)malloc(sizeof(struct Type_));
+		type->kind = BASIC;
+		type->detail.basic = TYPE_FLOAT;
+		return type;
+	}
+	else if(strcmp(child->identifier,"Exp")==0){
+		//Exp->Exp ...
+		if(strcmp(child->sibling->identifier,"ASSIGNOP")==0 ){
+			//Exp->Exp ASSIGNOP Exp
+			
+			//判断表达式左边是否为左值
+			Type Type1 = (Type)malloc(sizeof(struct Type_));
+			if(isleftvalue(child)==true)   //判断是否为左值的函数
+				Type1 = Exp(child);
+			else{
+				printf("Error type 6 at line %d: The left-hand side of an assignment must be a variable.\n", child->line);
+				Type1 = NULL;
+			}
+			//判断赋值号两边表达式是否类型匹配
+			Type Type2 = (Type)malloc(sizeof(struct Type_));
+			Type2 = Exp(child->sibling->sibling);			
+			if(ismatch(Type1, Type2)==TRUE)    //比较两个类型是否匹配的函数
+				return Type1;
+			else{
+				if(Type1==NULL || Type2==NULL)
+					//nothing
+				else{
+					printf("Error type 5 at line %d: Type mismatched for assignment.\n", child->line);
+				}
+				return NULL;			
+			}
+		}
+		else if(strcmp(child->sibling->identifier,"AND")==0 || strcmp(child->sibling->identifier,"OR")==0 || strcmp(child->sibling->identifier,"RELOP")==0 || strcmp(child->sibling->identifier,"PLUS")==0 || strcmp(child->sibling->identifier,"MINUS")==0 || strcmp(child->sibling->identifier,"STAR")==0 || strcmp(child->sibling->identifier,"DIV")==0){
+			//Exp->Exp AND|OR|RELOP|PLUS|MINUS|STAR|DIV Exp
+			Type Type1 = (Type)malloc(sizeof(struct Type_));
+			Type1 = Exp(child);
+			Type Type2 = (Type)malloc(sizeof(struct Type_));
+			Type2 = Exp(child->sibling->sibling);
+			
+			if(Type1->kind==BASIC && Type2->kind==BASIC && Type1->u.basic==Type2->u.basic)
+				return Type1;
+			else{
+				if(Type1==NULL || Type2==NULL)
+				//nothing
+				else{
+					printf("Error type 7 at line %d: Type mismatched for operands.\n", child->line);
+				}
+				return NULL;
+			}
+		}
+		else if(strcmp(child->sibling->identifier,"LB")==0){
+			//Exp->Exp LB Exp RB
+			Type array =(Type)malloc(sizeof(struct Type_));
+			array=Exp(child);
+			
+			if(array==NULL)
+				return NULL;
+			if(array->kind!=ARRAY){
+				printf("Error type 10 at line %d: \"%s\" is not an array.\n", child->line, array->kind);
+				return NULL;
+			}
+			child = child->sibling->sibling;
+			Type arraynumber = (Type)malloc(sizeof(struct Type_));
+			arraynumber = Exp(child);
+			if(arraynumber==NULL)
+				return NULL;
+			if(arraynumber->kind!=BASIC || arraynumber->u.basic!=TYPE_INT){
+				printf("Error type 12 at line %d: \"%s\" is not an array.\n", child->line , child->child->value);
+				return NULL;
+			}
+			return array->u.array.elem;
+		}
+		else if(strcmp(child->sibling->identifier,"DOT")==0){
+			//Exp->Exp DOT ID
+			Type structure = (Type)malloc(sizeof(struct Type_));
+			structure = Exp(child);
+			if(structure==NULL)
+				return NULL;
+			if(structure->kind!=STRUCTURE){
+				printf("Error type 13 at line %d: Illegal use of \".\".\n", child->line);
+				return NULL;
+			}
+			Type structfield = (Type)malloc(sizeof(struct Type_));
+			structfield = structure->u.structure->type;
+			child = child->sibling->sibling;
+			while(structfield!=NULL){
+				if(strcmp( structfield->u.structure->name, child->value) ==0)
+					return structfield;
+				
+				structfield = structfield->u.structure->tail->type;  //可能有错，找下一个
+			}
+			printf("Error type 14 at line %d: Non-existent field \"%s\".\n", child->line, child->value);
+			return NULL;
+		}
+
+		return NULL;
+	}
+
 	return NULL;
 }
