@@ -2,6 +2,10 @@
 #define SEMANTIC_H
 
 #include "SyntaxTree.h"
+#include "HashTable.h"
+
+#define ERROR_REDEFINE 1
+#define ERROR_DECLARATION_CONFLICT 2
 
 typedef struct Type_* Type;
 typedef struct FieldList_* FieldList;

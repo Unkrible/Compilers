@@ -44,6 +44,16 @@ void ExtDef(Node *n){
 			func->isDefined = 1;
 			int flag=funcInsertCheck(func);
 			insertTable(func);
+			
+			if(flag==ERROR_REDEFINE)
+					printf("Error type 4 at line %d:
+									Redefined function '%s'\n",
+									func->line,func->name);
+			else if(flag==ERROR_DECLARATION_CONFLICT)
+					printf("Error type 19 at line %d:
+									Inconsistent declaration of function
+								   	'%s'\n",func->line,func->name);
+
 			CompSt(child,type);
 		}
 	}

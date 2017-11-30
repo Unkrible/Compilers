@@ -71,9 +71,13 @@ int funcInsertCheck(Function func){
 						&& retypeCmp(tmpFunc->retype,func->retype==0))
 				continue;
 		if(tmpFunc->isDefined==0){
+			//TODO: Inconsistent declaration
 			tmpFunc->isDefined = func->isDefined;
 			continue;
 		}
+		else{
+			//TODO: Redefined function
+		} 
 		return 0;	
 	}
 	return 1;
