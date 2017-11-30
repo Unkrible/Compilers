@@ -22,6 +22,9 @@ void initTable();
 int insertTable(FieldList value);
 int insertTable(Function func);
 int funcInsertCheck(Function func);
+int structInsertCheck(FieldList structure);
+int varInsertCheck(FieldList var);
+
 FieldList getTable(char *name);
 
 #endif

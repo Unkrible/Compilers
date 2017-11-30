@@ -117,6 +117,7 @@ Type StructSpecifier(Node *n){
 	type->kind = STRUCTURE;
 	FieldList fl = (FieldList)malloc(sizeof(struct FieldList_));
 	fl->type = type;
+	type->u.structure = fl;
 
 	child = child->sibling;
 	
@@ -131,15 +132,27 @@ Type StructSpecifier(Node *n){
 			fl->name = child->child->value;
 		}
 		
-		//TODO: Error type 16
 		child = child->sibling->sibling;
 		fl->tail = DefList(child);
+		if(fl->name!=NULL){
+			//TODO: Error type 16
+			int flag = structInsertCheck(fl);
+			insertTable(fl);
+			if(flag == ERROR_REDEFINE)
+					printf("Error type 16 at line %d: 
+									Duplicated name '%s'\n'",
+									n->child->line, fl->name);
+		}
 	}
 	// STRUCT Tag
 	else if(strcmp(child->identifier, "Tag")==0){
 		//TODO: Error type 17
-		fl->name = child->child->value;
-		fl->tail = NULL;	
+		FieldList result = getTable(child->child->value);
+		if(result==NULL || result->type->kind!=STRUCTURE){
+				printf("Error type 17 at line %d: 
+									Undefined struct '%s'\n'",
+									n->child->line, child->child->value);
+		}
 	}
 	else
 			exit(-1);
