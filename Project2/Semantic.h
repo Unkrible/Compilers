@@ -4,10 +4,17 @@
 #include "SyntaxTree.h"
 #include "HashTable.h"
 
+#define BINGO 0
 #define ERROR_REDEFINE 1
 #define ERROR_DECLARATION_CONFLICT 2
+#define ERROR_DOMAIN_REDEFINE 3
+
+#define FROM_VARIABLE 1
+#define FROM_FIELD 2
+#define FROM_PARAM 3
 
 typedef struct Type_* Type;
+typedef struct Structure_* Structure;
 typedef struct FieldList_* FieldList;
 typedef struct Function_* Function;
 
@@ -21,11 +28,16 @@ struct Type_{
 		struct { Type elem; int size;} array;
 		
 		// structure information
-		FieldList structure;	
+		Structure structure;	
 		
 		// function information
 		Function function;
 	} u;
+};
+
+struct Structure_{
+	char *name;
+	FieldList domain;
 };
 
 struct FieldList_{
@@ -46,6 +58,7 @@ struct Function_{
 };
 
 int typeEqual(Type lhs, Type rhs);
+int typeEuqal(FieldList lhs, Type rhs);
 
 void Program(Node* root);
 void ExtDefList(Node *n);
@@ -55,7 +68,7 @@ void ExtDef(Node *n);
 Type Specifier(Node *n);
 Type StructSpecifier(Node *n);
 
-FieldList VarDec(Node *n, Type type);
+FieldList VarDec(Node *n, Type type, int from);
 Function FunDec(Node *n, Type type);
 FieldList VarList(Node *n, FieldList varList);
 FieldList ParamDec(Node *n);
@@ -64,10 +77,10 @@ void CompSt(Node *n, Type retype);
 void StmtList(Node *n, Type retype);
 void Stmt(Node *n, Type retype);
 
-FieldList DefList(Node *n);
-FieldList Def(Node *n, FieldList defList);
-FieldList DecList(Node *n, Type type);
-FieldList Dec(Node *n, Type type);
+FieldList DefList(Node *n,int from);
+FieldList Def(Node *n, int from);
+FieldList DecList(Node *n, Type type, int from);
+FieldList Dec(Node *n, Type type, int from);
 
 Type Exp(Node *n);
 

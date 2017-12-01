@@ -8,10 +8,11 @@
 #define HASH_SIZE 32768
 
 typedef struct Entry_{
-	enum {FIELDLIST,FUNCTION} kind;
+	enum {FIELDLIST, FUNCTION, STRUCTURE} kind;
 	union{
 			FieldList value;
 			Function func;
+			Structure structure;
 	}u;
 	struct Entry_ *next;
 }Entry;
@@ -19,12 +20,16 @@ typedef struct Entry_{
 extern Entry *hashTable[HASH_SIZE];
 
 void initTable();
+
 int insertTable(FieldList value);
+int varInsertCheck(FieldList var);
+FieldList getTable(char *name);
+
 int insertTable(Function func);
 int funcInsertCheck(Function func);
-int structInsertCheck(FieldList structure);
-int varInsertCheck(FieldList var);
 
-FieldList getTable(char *name);
+int insertTable(Structure structure);
+int structInsertCheck(FieldList structure);
+Structure getTable(char *name);
 
 #endif

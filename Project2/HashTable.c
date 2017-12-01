@@ -42,7 +42,7 @@ int insertTable(Function func){
 			return 0;
 
 	unsigned int hashValue = 0;
-	hashValue = hashPJW(value->name)%HASH_SIZE;
+	hashValue = hashPJW(func->name)%HASH_SIZE;
 
 	Entry *curEntry = (Entry *)malloc(sizeof(Entry));
 	curEntry->next = hashTable[hashValue];
@@ -54,10 +54,50 @@ int insertTable(Function func){
 	return 1;
 }
 
+int insertTable(Structure structure){
+	if(hashTalbe==NULL || structure==NULL)
+			return 0;
+
+	unsigned int hashValue = 0;
+	hashValue = hashPJW(structure->name)%HASH_SIZE;
+
+	Entry *curEntry = (Entry *)malloc(sizeof(Entry));
+	curEntry->next = hashTable[hashValue];
+	hashTable[hashValue] = curEntry;
+
+	curEntry->kind = STRUCTURE;
+	curEntry->u.structure = structure;
+	return 1;
+}
+
+int varInsertCheck(FieldList var){
+	if(var==NULL)
+		return BINGO;
+
+	unsigned int hashValue = hashPJW(var->name)%HASH_SIZE;
+	Entry *tmp = hashTable[hashValue];
+	for(;tmp!=NULL;tmp=tmp->next){
+		if(tmp->kind==FIELDLIST){
+			if(strcmp(tmp->u.value->name,var->name)==0){
+				return ERROR_REDEFINE;
+			}
+			else
+					continue;
+		}
+		else if(tmp->kind==STRUCTURE){
+			if(strcmp(tmp->u.structure->name,var->name)==0){
+				return ERROR_REDEFINE;
+			}
+			else
+					continue;
+		}
+	}
+}
+
 int funcInsertCheck(Function func){
 
 	if(hashTable==NULL || func==NULL)
-			return 0;
+			return BINGO;
 	
 	unsigned int hashValue = hashPJW(func->name)%HASH_SIZE;
 	Entry *tmp = hashTable[hashValue];
@@ -67,20 +107,42 @@ int funcInsertCheck(Function func){
 		Function tmpFunc = tmp->u.func;
 		if(strcmp(tmpFunc->name,func->name)!=0)
 				continue;
-		if(paramCmp(tmpFunc->param,func->param)==0 
-						&& retypeCmp(tmpFunc->retype,func->retype==0))
-				continue;
-		if(tmpFunc->isDefined==0){
-			//TODO: Inconsistent declaration
-			tmpFunc->isDefined = func->isDefined;
-			continue;
+		if(typeEqual(tmpFunc->param,func->param)!=0 
+						|| typeEqual(tmpFunc->retype,func->retype!=0))
+				return ERROR_REDELCARATION_CONFLICT;
+		if(tmpFunc->isDefined!=0){
+				return ERROR_REDEFINE;
 		}
 		else{
-			//TODO: Redefined function
+				tmpFunc->isDefined = func->isDefined;
+				continue;
 		} 
-		return 0;	
 	}
-	return 1;
+	return BINGO;
+}
+
+int structInsertCheck(Structure structure){
+	if(hashTable==NULL || structure==NULL)
+			return BINGO;
+	
+	unsigned int hashValue = hashPJW(structure->name)%HASH_SIZE;
+	Entry *tmp = hashTable[hashValue];
+	for(;tmp!=NULL;tmp=tmp->next){
+		if(tmp->kind==FIELDLIST){
+			if(strcmp(tmp->u.value->name,structure->name)==0){
+				return ERROR_REDEFINE
+			}
+			else
+				continue;
+		}
+		else if(tmp->kind==STRUCTURE){
+			if(strcmp(tmp->u.structure->name,structure->name)==0){
+				return ERROR_REDEFINE
+			}	
+			else continue;
+		}
+	}
+	return BINGO;
 }
 
 FieldList getTable(char *name){
@@ -92,8 +154,24 @@ FieldList getTable(char *name){
 
 	Entry *tmp = hashTable[hashValue];
 	for(;tmp!=NULL;tmp=tmp->next){
-		if(strcmp(tmp->value->name,name)==0)
+		if(tmp->kind==FIELDLIST&&strcmp(tmp->u.value->name,name)==0)
 				return tmp->value;
+	}
+
+	// Error: No such name
+	return NULL;
+}
+
+Structure getTable(char *name){
+	if(hashTable==NULL || name==NULL)
+			return NULL;
+
+	unsigned int hashValue = hashPJW(name)%HASH_SIZE;
+
+	Entry *tmp = hashTable[hashValue];
+	for(;tmp!=NULL;tmp=tmp->next){
+		if(tmp->kind==STRUCTURE&&strcmp(tmp->u.structure->name,name)==0)
+				return tmp->structure;
 	}
 
 	// Error: No such name
