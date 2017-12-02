@@ -8,8 +8,7 @@
 	
 	int yycolumn = 1;
 	/* define YY_USER_ACTION */
-	#define YY_USER_ACTION \
-		yylloc.first_line = yylloc.last_line = yylineno; \
+	#define YY_USER_ACTION yylloc.first_line = yylloc.last_line = yylineno; \
 		yylloc.first_column = yycolumn; \
 		yylloc.last_column = yycolumn + yyleng - 1; \
 		yycolumn += yyleng;
@@ -32,13 +31,13 @@ SFLOAT	((INT\.{DIGIT}*)|({DIGIT}*\.{DIGIT}+))[Ee][+-]?{DIGIT}+
 SFLOAT_ERROR	((INT\.{DIGIT}*)|({DIGIT}*\.{DIGIT}+))[Ee][+-]?([0-9A-Za-z]*)
 RELOP 	>|<|>=|<=|==|!=
 ID		({LETTER}|_)({LETTER}|{DIGIT}|_)*
-LINE	[\n]
 
 
 %%
 
 
 {WS}	{ /* tabs */ }
+
 
 "/*"([^\*]|(\*)*[^\*/])*(\*)*"*/"	{  /* C comments */ }
 
@@ -208,9 +207,7 @@ LINE	[\n]
 			return FLOAT;
 		}
 
-{LINE}	{
-			yycolumn = 1; 
-		}
+\n		{	yycolumn = 1; }
 
 {ID}	{ 
 			yylval.type_node = init("ID",yytext,TYPE_ID,yylineno);

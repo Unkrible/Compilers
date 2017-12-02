@@ -8,6 +8,8 @@
 #define ERROR_DECLARATION_CONFLICT 2
 #define ERROR_DOMAIN_REDEFINE 3
 
+#define FUNC_IS_DECLARED 4
+
 #define FROM_VARIABLE 1
 #define FROM_FIELD 2
 #define FROM_PARAM 3
@@ -70,7 +72,7 @@ Type StructSpecifier(Node *n);
 
 FieldList VarDec(Node *n, Type type, int from);
 Function FunDec(Node *n, Type type);
-FieldList VarList(Node *n, FieldList varList);
+FieldList VarList(Node *n);
 FieldList ParamDec(Node *n);
 
 void CompSt(Node *n, Type retype);

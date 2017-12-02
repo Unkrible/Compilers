@@ -27,4 +27,5 @@ int funcInsertCheck(Function func);
 int structInsertTable(Structure structure);
 int structInsertCheck(Structure structure);
 
+void checkFuncDeclaration();
 #endif

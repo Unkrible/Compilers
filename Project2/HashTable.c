@@ -31,9 +31,9 @@ int varInsertTable(FieldList value){
 	curEntry->next = hashTable[hashValue];
 	hashTable[hashValue] = curEntry;
 	
-	curEntry->type = value->type;	
+	curEntry->type = value->type;
 	curEntry->name = value->name;
-
+	
 	return 1;
 }
 
@@ -52,6 +52,20 @@ int funcInsertTable(Function func){
 	curEntry->type->kind = FUNCTION;
 	curEntry->type->u.function = func;
 	curEntry->name = func->name;
+
+	FieldList param = func->param;
+	int flag;
+
+	while(param != NULL){
+		flag = varInsertCheck(param);
+		if(flag == ERROR_REDEFINE){
+			printf("Error type 3 at Line %d: Redefine variable \"%s\"\n",func->line, param->name);
+		}
+		else{
+			varInsertTable(param);
+		}
+		param = param->tail;
+	}
 
 	return 1;
 }
@@ -110,7 +124,7 @@ int funcInsertCheck(Function func){
 		}
 		else{
 				tmpFunc->isDefined = func->isDefined;
-				continue;
+				return FUNC_IS_DECLARED;
 		} 
 	}
 	return BINGO;
@@ -146,4 +160,20 @@ Type getTable(char *name){
 
 	// Error: No such name
 	return NULL;
+}
+
+void checkFuncDeclaration(){
+	int i=0;
+	Entry *itor = NULL;
+	for(;i<HASH_SIZE;++i){
+		if(hashTable[i]!=NULL){
+			itor = hashTable[i];
+			while(itor!=NULL){
+				if(itor->type!=NULL&&itor->type->kind==FUNCTION&&itor->type->u.function->isDefined==0){
+					printf("Error type 18 at Line %d: Undefined function \"%s\".\n",itor->type->u.function->line,itor->type->u.function->name);
+				}
+				itor = itor->next;
+			}
+		}
+	}
 }

@@ -76,7 +76,7 @@ ExtDefList	: ExtDef ExtDefList{
 		   		$$ = init("ExtDefList", NULL, TYPE_NONTERMINAL, @$.first_line);
 				insert($$,$1);insert($$,$2);
 			}
-		   	| /* empty */{ $$=NULL; }
+		   	| /* empty */{ $$ = init("ExtDefList", NULL, TYPE_NONTERMINAL, @$.first_line); }
 			;
 ExtDef	: Specifier ExtDecList SEMI{
 	   		$$ = init("ExtDef", NULL, TYPE_NONTERMINAL, @$.first_line);
@@ -85,6 +85,10 @@ ExtDef	: Specifier ExtDecList SEMI{
 		| Specifier SEMI{
 	   		$$ = init("ExtDef", NULL, TYPE_NONTERMINAL, @$.first_line);
 			insert($$,$1);insert($$,$2);
+		}
+		| Specifier FunDec SEMI{
+			$$ = init("ExtDef", NULL, TYPE_NONTERMINAL, @$.first_line);
+			insert($$,$1);insert($$,$2);insert($$,$3);
 		}
 		| Specifier FunDec CompSt{
 	   		$$ = init("ExtDef", NULL, TYPE_NONTERMINAL, @$.first_line);
@@ -108,7 +112,7 @@ Specifier	: TYPE{
 				insert($$,$1);
 			}
 		  	| StructSpecifier{
-				$$ = init("StructSpecifier", NULL, TYPE_NONTERMINAL, @$.first_line);
+				$$ = init("Specifier", NULL, TYPE_NONTERMINAL, @$.first_line);
 				insert($$,$1);
 			}
 			;
@@ -125,7 +129,7 @@ OptTag	: ID{
 			$$ = init("OptTag", NULL, TYPE_NONTERMINAL, @$.first_line);
 			insert($$,$1);
 		}
-	    | /* empty */{ $$=NULL; }
+	    | /* empty */{$$ = init("OptTag", NULL, TYPE_NONTERMINAL, @$.first_line);}
 		;
 Tag	: ID{
 		$$ = init("Tag", NULL, TYPE_NONTERMINAL, @$.first_line);
@@ -173,13 +177,15 @@ CompSt	: LC DefList StmtList RC{
 			$$ = init("CompSt", NULL, TYPE_NONTERMINAL, @$.first_line);
 			insert($$,$1);insert($$,$2);insert($$,$3);insert($$,$4);
 		}
-		| LC error RC{ errorSyntaxFlag=2; }
+		| error RC{ errorSyntaxFlag=2; }
 	   	;
 StmtList	: Stmt StmtList{
 				$$ = init("StmtList", NULL, TYPE_NONTERMINAL, @$.first_line);
 				insert($$,$1);insert($$,$2);
 			}
-		 	| /* empty */{ $$ = NULL; }
+		 	| /* empty */{ 
+				$$ = init("StmtList", NULL, TYPE_NONTERMINAL, @$.first_line);
+			}
 			;
 Stmt	: Exp SEMI{ 
 			$$ = init("Stmt", NULL, TYPE_NONTERMINAL, @$.first_line);
@@ -216,7 +222,9 @@ DefList	: Def DefList{
 			$$ = init("DefList", NULL, TYPE_NONTERMINAL, @$.first_line);
 			insert($$,$1);insert($$,$2);
 		}
-		| /* empty */{ $$=NULL; }
+		| /* empty */{ 
+			$$ = init("DefList", NULL, TYPE_NONTERMINAL, @$.first_line);
+		}
 		;
 Def	: Specifier DecList SEMI{
 		$$ = init("Def", NULL, TYPE_NONTERMINAL, @$.first_line);
@@ -315,7 +323,6 @@ Exp	: Exp ASSIGNOP Exp{
 		$$ = init("Exp", NULL, TYPE_NONTERMINAL, @$.first_line);
 		insert($$,$1);
 	}
-	| Exp LB error RB{ errorSyntaxFlag=2; }
 	;
 Args	: Exp COMMA Args{
 			$$ = init("Args", NULL, TYPE_NONTERMINAL, @$.first_line);
