@@ -21,10 +21,7 @@ int typeEqual(Type lhs, Type rhs){
 		return typeEqual(lhs->u.array.elem, rhs->u.array.elem);
 	}
 	else if(lhs->kind == STRUCTURE){
-		if(strcmp(lhs->u.structure->name,rhs->u.structure->name)==0)
-				return 0;
-		else
-				return 4;
+		return structEqual(lhs->u.structure, rhs->u.structure);
 	}
 	else if(lhs->kind == FUNCTION){
 		// It doesn't need to judge whether functions equal.
@@ -32,6 +29,14 @@ int typeEqual(Type lhs, Type rhs){
 	}
 	
 	return 0;
+}
+
+int structEqual(Structure lhs, Structure rhs){
+	//TODO: Modify Struct-Name-Equivalence
+	if(strcmp(lhs->name, rhs->name)==0)
+			return 0;
+	else
+			return 4;
 }
 
 int valueEqual(FieldList lhs, FieldList rhs){
