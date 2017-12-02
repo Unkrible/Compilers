@@ -32,8 +32,17 @@ int typeEqual(Type lhs, Type rhs){
 }
 
 int structEqual(Structure lhs, Structure rhs){
-	//TODO: Modify Struct-Name-Equivalence
-	if(strcmp(lhs->name, rhs->name)==0)
+	int flag = 0;
+	FieldList lDomain = lhs->domain;
+	FieldList rDomain = rhs->domain;
+	while(lDomain!=NULL && rDomain!=NULL){
+		flag = typeEqual(lDomain->type, rDomain->type);
+		if(flag != 0)
+				return 4;
+		lDomain = lDomain->tail;
+		rDomain = rDomain->tail;
+	}
+	if(lDomain==NULL && rDomain==NULL)
 			return 0;
 	else
 			return 4;
@@ -51,7 +60,7 @@ int valueEqual(FieldList lhs, FieldList rhs){
 
 /* High-level Definitions */
 void Program(Node* root){
-	printf("%s\n",root->identifier);
+	//printf("%s\n",root->identifier);
 	// ExtDefList
 
 	ExtDefList(root->child);
@@ -61,7 +70,7 @@ void Program(Node* root){
 void ExtDefList(Node* n){
 	if(n==NULL)
 		return;
-	printf("%s\n",n->identifier);
+	//printf("%s\n",n->identifier);
 
 	// ExtDefList -> NULL
 	if(n->child == NULL)
@@ -76,7 +85,7 @@ void ExtDefList(Node* n){
 void ExtDef(Node *n){
 	if(n==NULL)
 		return;
-	printf("%s\n",n->identifier);
+	//printf("%s\n",n->identifier);
 	
 	Node* child = n->child;
 	Type type;
@@ -130,7 +139,7 @@ void ExtDef(Node *n){
 void ExtDecList(Node *n, Type type){
 	if(n==NULL)
 		return;
-	printf("%s\n",n->identifier);
+	//printf("%s\n",n->identifier);
 	
 	Node *child = n->child;
 	if(child == NULL)
@@ -151,7 +160,7 @@ void ExtDecList(Node *n, Type type){
 Type Specifier(Node *n){
 	if(n==NULL)
 		return NULL;
-	printf("%s\n",n->identifier);
+	//printf("%s\n",n->identifier);
 	
 	Node *child = n->child;
 	if(child == NULL)
@@ -184,7 +193,7 @@ Type Specifier(Node *n){
 Type StructSpecifier(Node *n){
 	if(n==NULL)
 		return NULL;
-	printf("%s\n",n->identifier);
+	//printf("%s\n",n->identifier);
 	
 	Node *child = n->child;
 	if(child == NULL)
@@ -237,7 +246,7 @@ Type StructSpecifier(Node *n){
 FieldList VarDec(Node *n, Type type, int from){
 	if(n==NULL)
 		return NULL;
-	printf("%s\n",n->identifier);
+	//printf("%s\n",n->identifier);
 	
 	Node *child = n->child;
 	FieldList varDec=NULL;
@@ -281,7 +290,7 @@ FieldList VarDec(Node *n, Type type, int from){
 Function FunDec(Node *n, Type type){
 	if(n==NULL)
 		return NULL;
-	printf("%s\n",n->identifier);
+	//printf("%s\n",n->identifier);
 	
 	Node *child = n->child;
 	Function func = (Function)malloc(sizeof(struct Function_));
@@ -302,7 +311,7 @@ Function FunDec(Node *n, Type type){
 FieldList VarList(Node *n){
 	if(n==NULL)
 			return NULL;
-	printf("%s\n",n->identifier);
+	//printf("%s\n",n->identifier);
 	
 	Node *child = n->child;
 	// ParamDec
@@ -321,7 +330,7 @@ FieldList VarList(Node *n){
 FieldList ParamDec(Node *n){
 	if(n==NULL)
 		return NULL;
-	printf("%s\n",n->identifier);
+	//printf("%s\n",n->identifier);
 	
 	Node *child = n->child;
 	// Specifier VarDec
@@ -335,7 +344,7 @@ FieldList ParamDec(Node *n){
 void CompSt(Node *n, Type retype){
 	if(n==NULL)
 		return;
-	printf("%s\n",n->identifier);
+	//printf("%s\n",n->identifier);
 	
 	Node *child = n->child;
 	// LC DefList StmtList RC
@@ -348,7 +357,7 @@ void CompSt(Node *n, Type retype){
 void StmtList(Node *n, Type retype){
 	if(n==NULL)
 		return;
-	printf("%s\n",n->identifier);
+	//printf("%s\n",n->identifier);
 
 	Node *child = n->child;
 	// StmtList -> NULL
@@ -363,7 +372,7 @@ void StmtList(Node *n, Type retype){
 void Stmt(Node *n, Type retype){
 	if(n==NULL)
 		return;
-	printf("%s\n",n->identifier);
+	//printf("%s\n",n->identifier);
 	
 	Node *child = n->child;
 	// Exp SEMI
@@ -407,7 +416,7 @@ void Stmt(Node *n, Type retype){
 FieldList DefList(Node *n, int from){
 	if(n==NULL)
 		return NULL;
-	printf("%s\n",n->identifier);
+	//printf("%s\n",n->identifier);
 	
 	Node *child = n->child;
 	FieldList defList = NULL;
@@ -433,7 +442,7 @@ FieldList DefList(Node *n, int from){
 FieldList Def(Node *n, int from){
 	if(n==NULL)
 		return NULL;
-	printf("%s\n",n->identifier);
+	//printf("%s\n",n->identifier);
 	
 	Node *child = n->child;
 	// Specifier DecList SEMI
@@ -447,7 +456,7 @@ FieldList Def(Node *n, int from){
 FieldList DecList(Node *n, Type type, int from){
 	if(n==NULL)
 		return NULL;
-	printf("%s\n",n->identifier);
+	//printf("%s\n",n->identifier);
 	
 	Node *child = n->child;
 	FieldList decList = NULL;
@@ -475,7 +484,7 @@ FieldList DecList(Node *n, Type type, int from){
 FieldList Dec(Node *n, Type type, int from){
 	if(n==NULL)
 		return NULL;
-	printf("%s\n",n->identifier);
+	//printf("%s\n",n->identifier);
 	
 	Node *child = n->child;
 	FieldList dec = VarDec(child, type, from);
@@ -502,10 +511,10 @@ FieldList Dec(Node *n, Type type, int from){
 Type Exp(Node *n){
 	if(n==NULL)
 		return NULL;
-	printf("%s\n",n->identifier);
+	//printf("%s\n",n->identifier);
 	
 	Node *child = n->child;
-	printf("%s\n",child->identifier);
+	//printf("%s\n",child->identifier);
 	if(strcmp(child->identifier,"LP")==0){
 		//Exp->LP Exp RP
 		child = child->sibling;
@@ -703,7 +712,7 @@ Type Exp(Node *n){
 int Args(Node *n, FieldList param){
 	if(n==NULL)
 		return 1;
-	printf("%s\n",n->identifier);
+	//printf("%s\n",n->identifier);
 	
 	Node *child = n->child;
 	if(param==NULL)
