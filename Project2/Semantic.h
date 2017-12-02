@@ -60,6 +60,7 @@ struct Function_{
 };
 
 int typeEqual(Type lhs, Type rhs);
+int structEqual(Structure lhs, Structure rhs);
 int valueEqual(FieldList lhs, FieldList rhs);
 
 void Program(Node* root);
