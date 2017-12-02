@@ -2,7 +2,6 @@
 #define SEMANTIC_H
 
 #include "SyntaxTree.h"
-#include "HashTable.h"
 
 #define BINGO 0
 #define ERROR_REDEFINE 1
@@ -33,6 +32,7 @@ struct Type_{
 		// function information
 		Function function;
 	} u;
+	enum { LEFT,RIGHT,BOTH } assign;
 };
 
 struct Structure_{
@@ -58,12 +58,12 @@ struct Function_{
 };
 
 int typeEqual(Type lhs, Type rhs);
-int typeEuqal(FieldList lhs, Type rhs);
+int valueEqual(FieldList lhs, FieldList rhs);
 
 void Program(Node* root);
 void ExtDefList(Node *n);
-void ExtDefList(Node *n, Type type);
 void ExtDef(Node *n);
+void ExtDecList(Node *n, Type type);
 
 Type Specifier(Node *n);
 Type StructSpecifier(Node *n);
@@ -77,11 +77,12 @@ void CompSt(Node *n, Type retype);
 void StmtList(Node *n, Type retype);
 void Stmt(Node *n, Type retype);
 
-FieldList DefList(Node *n,int from);
+FieldList DefList(Node *n, int from);
 FieldList Def(Node *n, int from);
 FieldList DecList(Node *n, Type type, int from);
 FieldList Dec(Node *n, Type type, int from);
 
 Type Exp(Node *n);
+int Args(Node *n, FieldList param);
 
 #endif

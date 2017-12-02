@@ -26,6 +26,8 @@ int main(int argc, char** argv){
 	
 	if(errorLexFlag == 0 && errorSyntaxFlag==0){
 		initTable();
+		printf("Let's Start!\n");
+		traverseTree(tree);
 		Program(tree);	
 	}
 	

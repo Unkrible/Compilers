@@ -19,7 +19,7 @@ void initTable(){
 	}
 }
 
-int insertTable(FieldList value){
+int varInsertTable(FieldList value){
 
 	if(hashTable==NULL || value==NULL)
 			return 0;
@@ -31,14 +31,14 @@ int insertTable(FieldList value){
 	curEntry->next = hashTable[hashValue];
 	hashTable[hashValue] = curEntry;
 	
-	curEntry->kind = FIELDLIST;
-	curEntry->u.value = value;
+	curEntry->type = value->type;	
+	curEntry->name = value->name;
 
 	return 1;
 }
 
-int insertTable(Function func){
-	if(hashTalbe==NULL || func==NULL)
+int funcInsertTable(Function func){
+	if(hashTable==NULL || func==NULL)
 			return 0;
 
 	unsigned int hashValue = 0;
@@ -48,14 +48,16 @@ int insertTable(Function func){
 	curEntry->next = hashTable[hashValue];
 	hashTable[hashValue] = curEntry;
 
-	curEntry->kind = FUNCTION;
-	curEntry->u.func = func;
+	curEntry->type = (Type)malloc(sizeof(struct Function_));
+	curEntry->type->kind = FUNCTION;
+	curEntry->type->u.function = func;
+	curEntry->name = func->name;
 
 	return 1;
 }
 
-int insertTable(Structure structure){
-	if(hashTalbe==NULL || structure==NULL)
+int structInsertTable(Structure structure){
+	if(hashTable==NULL || structure==NULL)
 			return 0;
 
 	unsigned int hashValue = 0;
@@ -65,8 +67,11 @@ int insertTable(Structure structure){
 	curEntry->next = hashTable[hashValue];
 	hashTable[hashValue] = curEntry;
 
-	curEntry->kind = STRUCTURE;
-	curEntry->u.structure = structure;
+	curEntry->type = (Type)malloc(sizeof(struct Structure_));
+	curEntry->type->kind = STRUCTURE;
+	curEntry->type->u.structure = structure;
+	curEntry->name = structure->name;
+
 	return 1;
 }
 
@@ -77,20 +82,10 @@ int varInsertCheck(FieldList var){
 	unsigned int hashValue = hashPJW(var->name)%HASH_SIZE;
 	Entry *tmp = hashTable[hashValue];
 	for(;tmp!=NULL;tmp=tmp->next){
-		if(tmp->kind==FIELDLIST){
-			if(strcmp(tmp->u.value->name,var->name)==0){
+		if(tmp->type->kind!=FUNCTION&&strcmp(tmp->name, var->name)==0)
 				return ERROR_REDEFINE;
-			}
-			else
-					continue;
-		}
-		else if(tmp->kind==STRUCTURE){
-			if(strcmp(tmp->u.structure->name,var->name)==0){
-				return ERROR_REDEFINE;
-			}
-			else
-					continue;
-		}
+		else
+				continue;
 	}
 }
 
@@ -102,14 +97,14 @@ int funcInsertCheck(Function func){
 	unsigned int hashValue = hashPJW(func->name)%HASH_SIZE;
 	Entry *tmp = hashTable[hashValue];
 	for(;tmp!=NULL;tmp=tmp->next){
-		if(tmp->kind != FUNCTION)
+		if(tmp->type->kind != FUNCTION)
 				continue;
-		Function tmpFunc = tmp->u.func;
+		Function tmpFunc = tmp->type->u.function;
 		if(strcmp(tmpFunc->name,func->name)!=0)
 				continue;
-		if(typeEqual(tmpFunc->param,func->param)!=0 
-						|| typeEqual(tmpFunc->retype,func->retype!=0))
-				return ERROR_REDELCARATION_CONFLICT;
+		if((valueEqual(tmpFunc->param,func->param)!=0)
+						|| (typeEqual(tmpFunc->retype,func->retype)!=0))
+				return ERROR_DECLARATION_CONFLICT;
 		if(tmpFunc->isDefined!=0){
 				return ERROR_REDEFINE;
 		}
@@ -128,24 +123,15 @@ int structInsertCheck(Structure structure){
 	unsigned int hashValue = hashPJW(structure->name)%HASH_SIZE;
 	Entry *tmp = hashTable[hashValue];
 	for(;tmp!=NULL;tmp=tmp->next){
-		if(tmp->kind==FIELDLIST){
-			if(strcmp(tmp->u.value->name,structure->name)==0){
-				return ERROR_REDEFINE
-			}
-			else
+		if(tmp->type->kind!=FUNCTION&&strcmp(tmp->name,structure->name)==0)
+				return ERROR_REDEFINE;
+		else
 				continue;
-		}
-		else if(tmp->kind==STRUCTURE){
-			if(strcmp(tmp->u.structure->name,structure->name)==0){
-				return ERROR_REDEFINE
-			}	
-			else continue;
-		}
 	}
 	return BINGO;
 }
 
-FieldList getTable(char *name){
+Type getTable(char *name){
 	
 	if(hashTable==NULL || name==NULL)
 			return NULL;
@@ -154,24 +140,8 @@ FieldList getTable(char *name){
 
 	Entry *tmp = hashTable[hashValue];
 	for(;tmp!=NULL;tmp=tmp->next){
-		if(tmp->kind==FIELDLIST&&strcmp(tmp->u.value->name,name)==0)
-				return tmp->value;
-	}
-
-	// Error: No such name
-	return NULL;
-}
-
-Structure getTable(char *name){
-	if(hashTable==NULL || name==NULL)
-			return NULL;
-
-	unsigned int hashValue = hashPJW(name)%HASH_SIZE;
-
-	Entry *tmp = hashTable[hashValue];
-	for(;tmp!=NULL;tmp=tmp->next){
-		if(tmp->kind==STRUCTURE&&strcmp(tmp->u.structure->name,name)==0)
-				return tmp->structure;
+		if(strcmp(tmp->name,name)==0)
+				return tmp->type;
 	}
 
 	// Error: No such name

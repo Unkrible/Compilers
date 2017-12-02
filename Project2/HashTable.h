@@ -5,31 +5,26 @@
 #include "Semantic.h"
 #include <string.h>
 
-#define HASH_SIZE 32768
+#define HASH_SIZE 1024
 
 typedef struct Entry_{
-	enum {FIELDLIST, FUNCTION, STRUCTURE} kind;
-	union{
-			FieldList value;
-			Function func;
-			Structure structure;
-	}u;
+	char *name;
+	Type type;
 	struct Entry_ *next;
 }Entry;
 
 extern Entry *hashTable[HASH_SIZE];
 
 void initTable();
+Type getTable(char *name);
 
-int insertTable(FieldList value);
+int varInsertTable(FieldList value);
 int varInsertCheck(FieldList var);
-FieldList getTable(char *name);
 
-int insertTable(Function func);
+int funcInsertTable(Function func);
 int funcInsertCheck(Function func);
 
-int insertTable(Structure structure);
-int structInsertCheck(FieldList structure);
-Structure getTable(char *name);
+int structInsertTable(Structure structure);
+int structInsertCheck(Structure structure);
 
 #endif

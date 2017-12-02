@@ -13,3 +13,7 @@ syntax:
 
 clean:
 	rm lex.yy.c lex.o syntax.tab.c syntax.tab.h parser
+
+remake:
+	make clean
+	make
