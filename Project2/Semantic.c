@@ -531,8 +531,10 @@ Type Exp(Node *n){
 			printf("Error type 7 at Line %d: Operands type mismatched\n", child->line);
 			return NULL;
 		}
-		type->assign = RIGHT;
-		return type;
+		Type rtn = (Type)malloc(sizeof(struct Type_));
+		memcpy(rtn, type, sizeof(struct Type_));
+		rtn->assign = RIGHT;
+		return rtn;
 	}
 	else if(strcmp(child->identifier,"NOT")==0){
 		//Exp->NOT Exp
@@ -545,8 +547,10 @@ Type Exp(Node *n){
 			printf("Error type 7 at Line %d: Operands type mismatched\n", child->line);
 			return NULL;
 		}
-		type->assign = RIGHT;
-		return type;
+		Type rtn = (Type)malloc(sizeof(struct Type_));
+		memcpy(rtn, type, sizeof(struct Type_));
+		rtn->assign = RIGHT;
+		return rtn;
 	}
 	else if(strcmp(child->identifier,"ID")==0){
 		if(child->sibling==NULL){
@@ -556,8 +560,10 @@ Type Exp(Node *n){
 				printf("Error type 1 at Line %d: Undefined variable \"%s\".\n", child->line, child->value);	
 				return NULL;
 			}
-			value->assign = BOTH;
-			return value;
+			Type rtn = (Type)malloc(sizeof(struct Type_));
+			memcpy(rtn, value, sizeof(struct Type_));
+			rtn->assign = BOTH;
+			return rtn;
 		}
 		else{
 			//Exp->ID LP RP | ID LP Args RP
@@ -648,8 +654,10 @@ Type Exp(Node *n){
 				return NULL;	
 			if(lhs->kind==BASIC && rhs->kind==BASIC && 
 							lhs->u.basic==rhs->u.basic){
-				lhs->assign = RIGHT;
-				return lhs;
+				Type rtn = (Type)malloc(sizeof(struct Type_));
+				memcpy(rtn, lhs, sizeof(struct Type_));
+				rtn->assign = RIGHT;
+				return rtn;
 			}
 			else{
 				printf("Error type 7 at Line %d: Type mismatched for operands.\n", child->line);
