@@ -1,7 +1,7 @@
 #include"stdlib.h"
 #include"stdio.h"
 #include"string.h"
-#include"1.h"
+#include"InterCode.h"
 
 InterCode code_head=NULL;
 InterCode code_tail=NULL;
@@ -9,6 +9,9 @@ InterCode code_tail=NULL;
 int temVarNo = 1;
 int labelNo = 1;
 int varNo = 1;
+char *zeroStr;
+char *oneStr;
+char *neStr;
 
 void insertCode(InterCode p){
 	assert(p!=NULL);
@@ -73,7 +76,7 @@ void printOp(Operand p, FILE* fp){
 			sprintf(str, "%s ", p->u.value);
 			fputs(str, fp);
 			break;
-		case TADDRESS: 
+		case TADDRESS:
 			fputs("*t",fp);
 			sprintf(str,"%d",op->u.addr->u.var_no);
 			fputs(str,fp);
@@ -263,7 +266,7 @@ void optimizeGoto()
 				continue;
 			if(c2->kind==LABEL_N&&c1->u.sinop.op==c2->u.sinop.op)
 				deleteCode(c1);
-		}		
+		}
 	}
 }
 
@@ -334,7 +337,7 @@ void figureCon()
 		if(p->kind==ADD_N||p->kind==SUB_N||p->kind==MUL_N||p->kind==DIV_N)
 		{
 			Operand op1 = p->u.binop.op1;
-			Operand op2 = p->u.binop.op2;			
+			Operand op2 = p->u.binop.op2;
 			Operand result = p->u.binop.result;
 
 			if(result->kind==TEMPVAR&&op1->kind==CONSTANT&&op2->kind==CONSTANT)

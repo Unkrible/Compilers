@@ -2,6 +2,8 @@
 #include "parse.h"
 #include "HashTable.h"
 #include "Semantic.h"
+#include "InterCode.h"
+#include "string.h"
 
 Node *tree;
 int errorLexFlag;
@@ -16,20 +18,29 @@ int main(int argc, char** argv){
 		return 1;
 	}
 
+	zeroStr = malloc(sizeof(char[2]));
+	memset(zeroStr, 0, sizeof(zeroStr));
+	strcpy(zeroStr, "0");
+	oneStr = malloc(sizeof(char[2]));
+	memset(oneStr, 0, sizeof(oneStr));
+	strcpy(oneStr, "1");
+	neStr = malloc(sizeof(char[3]));
+	memset(neStr, 0, sizeof(neStr));
+	strcpy(neStr, "!=");
 
-	tree = NULL;	
+	tree = NULL;
 	errorLexFlag = 0;
 	errorSyntaxFlag = 0;
 	yylineno = 1;
 	yyrestart(f);
 	yyparse();
-	
+
 	if(errorLexFlag == 0 && errorSyntaxFlag==0){
 		initTable();
 //		traverseTree(tree);
-		Program(tree);	
+		Program(tree);
 	}
-	
+
 	cleanTree(tree);
 	return 0;
 

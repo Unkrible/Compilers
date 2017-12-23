@@ -24,13 +24,13 @@ struct Type_{
 	union{
 		// basic type
 		int basic;
-		
+
 		// array information
 		struct { Type elem; int size;} array;
-		
+
 		// structure information
-		Structure structure;	
-		
+		Structure structure;
+
 		// function information
 		Function function;
 	} u;
@@ -60,6 +60,7 @@ struct Function_{
 };
 
 int typeEqual(Type lhs, Type rhs);
+int typeSize(Type type);
 int structEqual(Structure lhs, Structure rhs);
 int valueEqual(FieldList lhs, FieldList rhs);
 
@@ -85,7 +86,8 @@ FieldList Def(Node *n, int from);
 FieldList DecList(Node *n, Type type, int from);
 FieldList Dec(Node *n, Type type, int from);
 
-Type Exp(Node *n);
+Type Exp(Node *n, Operand place);
+Type Exp_Cond(Node *n,Operand label_true,Operand label_false)
 int Args(Node *n, FieldList param);
 
 #endif
