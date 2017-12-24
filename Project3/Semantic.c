@@ -209,7 +209,7 @@ void ExtDecList(Node *n, Type type){
 			Operand op=malloc(sizeof(Operand_));
 			op->kind = TEMPVAR;
 			op->u.var_no = temVarNo++;
-			i++
+			i++;
 			InterCode deccode=malloc(sizeof(InterCode_));
 			deccode->kind=DEC_N;
 			deccode->u.dec.op = op;

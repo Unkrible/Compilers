@@ -339,7 +339,7 @@ void deleteLabel()
 void figureCon()
 {
 	InterCode p;
-	for(p=code_head;p!=NULL;p=p->next)
+	for(p=code_head;p!=NULL;)
 	{
 		if(p->kind==ADD_N||p->kind==SUB_N||p->kind==MUL_N||p->kind==DIV_N)
 		{
@@ -360,10 +360,14 @@ void figureCon()
 					default:break;
 				}
 				result->kind=CONSTANT;
+				result->u.value = malloc(32);
 				sprintf(result->u.value,"%d",r);
-				deleteCode(p);
+				InterCode tmp = p;
+				p = p->next;
+				deleteCode(tmp);
 				continue;
 			}
 		}
+		p = p->next;
 	}
 }
