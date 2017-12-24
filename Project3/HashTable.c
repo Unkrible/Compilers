@@ -38,10 +38,10 @@ void initTable(){
 	write->retype->kind=BASIC;
 	write->retype->u.basic=TYPE_INT;
 	write->param=malloc(sizeof(struct FieldList_));
-	wirte->param->name = malloc(16);
-	strcpy(wirte->param->name,"write_param");
-	wirte->param->type=wirte->retype;
-	wirte->param->tail=NULL;
+	write->param->name = malloc(16);
+	strcpy(write->param->name,"write_param");
+	write->param->type=write->retype;
+	write->param->tail=NULL;
 	funcInsertTable(read);
 }
 
