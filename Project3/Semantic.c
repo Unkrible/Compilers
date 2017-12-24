@@ -1172,7 +1172,7 @@ Type Exp(Node *n, Operand place){
 				//用于存储宽度
 					Operand wideOp = malloc(sizeof(Operand_));
 					memset(wideOp, 0, sizeof(Operand_));
-					wideOp->kind = CONST_OP;
+					wideOp->kind = CONSTANT;
 					char* wideStr = malloc(16*sizeof(char));
 					int wide = array->u.array.size;
 					sprintf(wideStr, "%d", wide);
@@ -1472,7 +1472,7 @@ int Args(Node *n, FieldList param, Operand arg){
 	printf("%s\n",n->identifier);
 	Operand t=malloc(sizeof(struct Operand_));
 	t->kind=TEMPVAR;
-	t->u.var_no=varCount++
+	t->u.var_no=varCount++;
 	Node *child = n->child;
 	if(param==NULL)
 			return 1;

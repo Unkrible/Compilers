@@ -299,7 +299,7 @@ void deleteLabel()
 		c=c->next;
 	}
 
-	c=code_h;
+	c=code_head;
 	while(c!=NULL)
 	{
 		if(c->kind==LABEL_N)
