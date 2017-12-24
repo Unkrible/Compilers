@@ -89,6 +89,6 @@ FieldList Dec(Node *n, Type type, int from);
 
 Type Exp(Node *n, Operand place);
 Type Exp_Cond(Node *n,Operand label_true,Operand label_false);
-int Args(Node *n, FieldList param);
+int Args(Node *n, FieldList param, Operand arg);
 
 #endif

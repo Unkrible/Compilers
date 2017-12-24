@@ -217,7 +217,7 @@ void ExtDecList(Node *n, Type type){
 			v->u.value = fl->name;
 
 			InterCode addrcode = malloc(sizeof(InterCode_));
-			addrcode->kind = RIGHTAT_N;
+			addrcode->kind = ADDRESS_N;
 			addrcode->u.assign.left = v;
 			addrcode->u.assign.right = op;
 			insertCode(addrcode);
@@ -365,7 +365,7 @@ FieldList VarDec(Node *n, Type type, int from){
 				v->u.value = child->value;
 
 				InterCode addrcode=malloc(sizeof(InterCode_));
-				addrcode->kind = RIGHTAT_N;
+				addrcode->kind = ADDRESS_N;
 				addrcode->u.assign.left = v;
 				addrcode->u.assign.right = op;
 				insertCode(addrcode);
@@ -651,7 +651,7 @@ FieldList Dec(Node *n, Type type, int from){
 	Node *child = n->child;
 	FieldList dec = VarDec(child, type, from);
 
-	if(f->type->kind==1&&from==1)
+	if(dec->type->kind==ARRAY&&from==1)
 	{
 		//array space
 		Operand op=malloc(sizeof(Operand_));
@@ -669,7 +669,7 @@ FieldList Dec(Node *n, Type type, int from){
 		v->u.value=dec->name;
 
 		InterCode addrcode=malloc(sizeof(InterCode_));
-		addrcode->kind = RIGHTAT_N;
+		addrcode->kind = ADDRESS_N;
 		addrcode->u.assign.left = v;
 		addrcode->u.assign.right = op;
 		insertCode(addrcode);
@@ -816,8 +816,7 @@ Type Exp(Node *n, Operand place){
 			//--------------------------translate------------
 			if(place!=NULL){
 				place->kind = VARIABLE;
-				// place->u.value = child->value;
-				setOpValue(place, child->value);
+				place->u.value = child->value;
 			}
 			//--------------------------translate------------
 			value->assign = BOTH;
@@ -1337,11 +1336,11 @@ Type Exp(Node *n, Operand place){
 //exp condition
 Type Exp_Cond(Node *n,Operand label_true,Operand label_false)
 {//printName(n->name);
-	Node *child = n->children;
+	Node *child = n->child;
 	Type type;
 	if(strcmp(child->name,"Exp")==0)
 	{
-		Node *child2=child->next;
+		Node *child2=child->sibling;
 		if(strcmp(child2->name,"RELOP")==0)//< >
 		{
 			//new temp
@@ -1353,13 +1352,13 @@ Type Exp_Cond(Node *n,Operand label_true,Operand label_false)
 			t2->u.var_no=temVarNo++;
 
 			Node* child3=child2;
-			child2=child2->next;
+			child2=child2->sibling;
 			Type tp=Exp(child,t1);	//code1
 			Type tp2=Exp(child2,t2);	//code2
 			if(tp==NULL||tp2==NULL)return NULL;
 			else if((tp->kind==BASIC||tp->kind==FUNCTION)&&(tp2->kind==BASIC||tp2->kind==STRUCTURE)&&tp->u.basic==tp2->u.basic)
 			{
-				InterCode code3=malloc(sizeof(nterCode_));
+				InterCode code3=malloc(sizeof(InterCode_));
 				code3->kind=IFGOTO_N;
 				code3->u.triop.t1=t1;
 				code3->u.triop.op=child3->value;
@@ -1369,7 +1368,7 @@ Type Exp_Cond(Node *n,Operand label_true,Operand label_false)
 
 				InterCode gotolbf=malloc(sizeof(InterCode_));
 				gotolbf->kind=GOTO_N;
-				gotolbf->u.one.op=label_false;
+				gotolbf->u.sinop.op=label_false;
 				insertCode(gotolbf);		//goto label false
 				return tp;
 			}
@@ -1380,7 +1379,7 @@ Type Exp_Cond(Node *n,Operand label_true,Operand label_false)
 			}
 
 		}
-		else if(strcmp(child2->name,"AND")==0)
+		else if(strcmp(child2->identifier,"AND")==0)
 		{
 			//new temp
 			Operand lb1=malloc(sizeof(Operand_));
@@ -1391,29 +1390,29 @@ Type Exp_Cond(Node *n,Operand label_true,Operand label_false)
 
 			InterCode lb1code=malloc(sizeof(InterCode_));
 			lb1code->kind=LABEL_N;
-			lb1code->u.one.op=lb1;
+			lb1code->u.sinop.op=lb1;
 			insertCode(lb1code);		//label 1
 
-			child2=child2->next;
+			child2=child2->sibling;
 			Type t2=Exp_Cond(child2,label_true,label_false);	//code2
 			if(t==NULL||t2==NULL)return NULL;
 			else if((t->kind==BASIC||t->kind==FUNCTION)&&(t2->kind==BASIC||t2->kind==FUNCTION)&&t->u.basic==t2->u.basic)
 								return t;
 			else
 			{
-				printf("Error type 7 at line %d: Operands type mismatched!!\n",child->row);
+				printf("Error type 7 at line %d: Operands type mismatched!!\n",child->line);
 				return NULL;
 			}
 
 		}
-		else if(strcmp(child2->name,"OR")==0)
+		else if(strcmp(child2->identifier,"OR")==0)
 		{
 			//new temp
 			Operand lb1=malloc(sizeof(Operand_));
 			lb1->kind=LABEL;
 			lb1->u.var_no=labelNo++;
 
-			child2=child2->next;
+			child2=child2->sibling;
 			Type t=Exp_Cond(child,label_true,lb1);	//code1
 
 			InterCode lb1code=malloc(sizeof(InterCode_));
@@ -1436,11 +1435,11 @@ Type Exp_Cond(Node *n,Operand label_true,Operand label_false)
 	}
 	if(strcmp(child->name,"NOT")==0)	//not
 	{
-		child=child->next;
+		child=child->sibling;
 		Type t=Exp_Cond(child,label_false,label_true);
 		if(t==NULL)return NULL;
 		if(t->kind==BASIC&&t->u.basic==TYPE_INT)return t;
-		printf("Error type 7 at line %d: Operands type mismatched\n",child->row);
+		printf("Error type 7 at line %d: Operands type mismatched\n",child->line);
 		return NULL;
 	}
 	Operand t1=malloc(sizeof(Operand_));
@@ -1448,14 +1447,13 @@ Type Exp_Cond(Node *n,Operand label_true,Operand label_false)
 	t1->u.var_no=temVarNo++;
 	type=Exp(n,t1);		//code1
 	InterCode code2=malloc(sizeof(InterCode_));
-	code2->kind=IFGOTO_K;
-	code2->u.triop.t1=t1;
-	code2->u.triop.op=malloc(32);
-	strcpy(code2->u.triop.op,"!=");
+	code2->kind=IFGOTO_N;
+	code2->u.triop.x=t1;
+	code2->u.triop.op= neStr;
 	Operand t2=malloc(sizeof(Operand_));
 	t2->kind=CONSTANT;
 	t2->u.value=zeroStr;
-	code2->u.triop.t2=t2;
+	code2->u.triop.y=t2;
 	code2->u.triop.label=label_true;
 	insertCode(code2);		//code2
 

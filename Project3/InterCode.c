@@ -14,7 +14,9 @@ char *oneStr;
 char *neStr;
 
 void insertCode(InterCode p){
-	assert(p!=NULL);
+	if(p==NULL)
+		exit(-1);
+	//assert(p!=NULL);
     p->pre=NULL;
 	p->next=NULL;
 	if(code_head==NULL){
