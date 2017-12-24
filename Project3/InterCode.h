@@ -7,9 +7,7 @@ typedef struct Label_No_* Label_No;
 
 
 typedef struct Operand_{
-	enum{
-		TEMPVAR,VARIABLE,CONSTANT,VADDRESS,LABEL,FUNCTION,TADDRESS
-	}kind;
+	enum{TEMPVAR,VARIABLE,CONSTANT,VADDRESS,LABEL,FUNCTION,TADDRESS }kind;
 
 	union{
 		int var_no;
@@ -20,9 +18,7 @@ typedef struct Operand_{
 } Operand_;
 
 typedef struct InterCode_{
-	enum{
-		ASSIGN_N,ADD_N,SUB_N,MUL_N,DIV_N,RETURN_N,LABEL_N,GOTO_N,IFGOTO_N,READ_N,WRITE_N,CALL_N,ARG_N,FUNCTION_N,PARAM_N,DEC_N,ADDRESS_N
-	}kind;
+	enum{ASSIGN_N,ADD_N,SUB_N,MUL_N,DIV_N,RETURN_N,LABEL_N,GOTO_N,IFGOTO_N,READ_N,WRITE_N,CALL_N,ARG_N,FUNCTION_N,PARAM_N,DEC_N,ADDRESS_N}kind;
 
 	union{
 		struct{	Operand op;	}sinop;
