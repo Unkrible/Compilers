@@ -150,7 +150,7 @@ void ExtDef(Node *n){
 			else if(flag!=FUNC_IS_DECLARED){
 				funcInsertTable(func);
 				Operand funcop=malloc(sizeof(Operand_));
-				funcop->kind = FUNCTION;
+				funcop->kind = FUNCTION_;
 				funcop->u.value = func->name;
 				InterCode code=malloc(sizeof(InterCode_));
 				code->kind = FUNCTION_N;
@@ -858,7 +858,7 @@ Type Exp(Node *n, Operand place){
 					else{
 						Operand funcOp = malloc(sizeof(Operand_));
 						memset(funcOp, 0, sizeof(Operand_));
-						funcOp->kind = FUNCTION;
+						funcOp->kind = FUNCTION_;
 						funcOp->u.value = func->name;
 						if(place!=NULL){
 							InterCode funcCode = malloc(sizeof(InterCode_));
@@ -920,7 +920,7 @@ Type Exp(Node *n, Operand place){
 						}
 						Operand funcOp = malloc(sizeof(Operand_));
 						memset(funcOp, 0, sizeof(Operand_));
-						funcOp->kind = FUNCTION;
+						funcOp->kind = FUNCTION_;
 						funcOp->u.value = func->name;
 						if(place!=NULL){
 							InterCode funcCode = malloc(sizeof(InterCode_));

@@ -72,7 +72,7 @@ void printOp(Operand p, FILE* fp){
 			sprintf(str, "label%d ", p->u.var_no);
 			fputs(str, fp);
 			break;
-		case FUNCTION:
+		case FUNCTION_:
 			sprintf(str, "%s ", p->u.value);
 			fputs(str, fp);
 			break;

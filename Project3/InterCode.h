@@ -7,7 +7,7 @@ typedef struct Label_No_* Label_No;
 
 
 typedef struct Operand_{
-	enum{TEMPVAR,VARIABLE,CONSTANT,VADDRESS,LABEL,FUNCTION,TADDRESS }kind;
+	enum{TEMPVAR,VARIABLE,CONSTANT,VADDRESS,LABEL,FUNCTION_,TADDRESS }kind;
 
 	union{
 		int var_no;
