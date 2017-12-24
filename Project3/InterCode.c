@@ -73,7 +73,7 @@ void printOp(Operand p, FILE* fp){
 		case VADDRESS:
 			fputs("*", fp);
 			assert(p->u.addr!=NULL);
-			printOp(p->u.addr, fp);
+			fputs(p->u.addr->u.value, fp);
 			break;
 		case LABEL:
 			sprintf(str, "label%d ", p->u.var_no);

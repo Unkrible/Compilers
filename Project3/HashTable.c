@@ -40,7 +40,9 @@ void initTable(){
 	write->param=malloc(sizeof(struct FieldList_));
 	write->param->name = malloc(16);
 	strcpy(write->param->name,"write_param");
-	write->param->type=write->retype;
+	write->param->type=malloc(sizeof(struct Type_));
+	write->param->type->kind = BASIC;
+	write->param->type->u.basic = TYPE_INT;
 	write->param->tail=NULL;
 	funcInsertTable(write);
 }

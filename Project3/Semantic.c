@@ -93,7 +93,9 @@ int typeSize(Type type){
 
 /* High-level Definitions */
 void Program(Node* root){
+#ifdef M_DEBUG
 	printf("%s\n",root->identifier);
+#endif
 	// ExtDefList
 
 	ExtDefList(root->child);
@@ -103,7 +105,9 @@ void Program(Node* root){
 void ExtDefList(Node* n){
 	if(n==NULL)
 		return;
+#ifdef M_DEBUG
 	printf("%s\n",n->identifier);
+#endif
 
 	// ExtDefList -> NULL
 	if(n->child == NULL)
@@ -118,7 +122,9 @@ void ExtDefList(Node* n){
 void ExtDef(Node *n){
 	if(n==NULL)
 		return;
+#ifdef M_DEBUG
 	printf("%s\n",n->identifier);
+#endif
 
 	Node* child = n->child;
 	Type type;
@@ -196,7 +202,9 @@ void ExtDef(Node *n){
 void ExtDecList(Node *n, Type type){
 	if(n==NULL)
 		return;
+#ifdef M_DEBUG
 	printf("%s\n",n->identifier);
+#endif
 	int i=0;
 	Node *child = n->child;
 	if(child == NULL)
@@ -241,7 +249,9 @@ void ExtDecList(Node *n, Type type){
 Type Specifier(Node *n){
 	if(n==NULL)
 		return NULL;
+#ifdef M_DEBUG
 	printf("%s\n",n->identifier);
+#endif
 
 	Node *child = n->child;
 	if(child == NULL)
@@ -274,7 +284,9 @@ Type Specifier(Node *n){
 Type StructSpecifier(Node *n){
 	if(n==NULL)
 		return NULL;
+#ifdef M_DEBUG
 	printf("%s\n",n->identifier);
+#endif
 
 	Node *child = n->child;
 	if(child == NULL)
@@ -327,7 +339,9 @@ Type StructSpecifier(Node *n){
 FieldList VarDec(Node *n, Type type, int from){
 	if(n==NULL)
 		return NULL;
+#ifdef M_DEBUG
 	printf("%s\n",n->identifier);
+#endif
 
 	Node *child = n->child;
 	FieldList varDec=NULL;
@@ -394,7 +408,9 @@ FieldList VarDec(Node *n, Type type, int from){
 Function FunDec(Node *n, Type type){
 	if(n==NULL)
 		return NULL;
+#ifdef M_DEBUG
 	printf("%s\n",n->identifier);
+#endif
 
 	Node *child = n->child;
 	Function func = (Function)malloc(sizeof(struct Function_));
@@ -415,7 +431,9 @@ Function FunDec(Node *n, Type type){
 FieldList VarList(Node *n){
 	if(n==NULL)
 			return NULL;
+#ifdef M_DEBUG
 	printf("%s\n",n->identifier);
+#endif
 
 	Node *child = n->child;
 	// ParamDec
@@ -434,7 +452,9 @@ FieldList VarList(Node *n){
 FieldList ParamDec(Node *n){
 	if(n==NULL)
 		return NULL;
+#ifdef M_DEBUG
 	printf("%s\n",n->identifier);
+#endif
 
 	Node *child = n->child;
 	// Specifier VarDec
@@ -448,7 +468,9 @@ FieldList ParamDec(Node *n){
 void CompSt(Node *n, Type retype){
 	if(n==NULL)
 		return;
+#ifdef M_DEBUG
 	printf("%s\n",n->identifier);
+#endif
 
 	Node *child = n->child;
 	// LC DefList StmtList RC
@@ -461,7 +483,9 @@ void CompSt(Node *n, Type retype){
 void StmtList(Node *n, Type retype){
 	if(n==NULL)
 		return;
+#ifdef M_DEBUG
 	printf("%s\n",n->identifier);
+#endif
 
 	Node *child = n->child;
 	// StmtList -> NULL
@@ -476,7 +500,9 @@ void StmtList(Node *n, Type retype){
 void Stmt(Node *n, Type retype){
 	if(n==NULL)
 		return;
+#ifdef M_DEBUG
 	printf("%s\n",n->identifier);
+#endif
 
 	Node *child = n->child;
 	// Exp SEMI
@@ -515,7 +541,7 @@ void Stmt(Node *n, Type retype){
 		lb1->u.var_no = labelNo++;
 		i+=temVarNo;
 		Operand lb2 = malloc(sizeof(Operand_));
-		lb2->kind= LABEL;
+		lb2->kind = LABEL;
 		lb2->u.var_no = labelNo++;
 		Type expType = Exp_Cond(child,lb1,lb2);
 		i--;
@@ -593,8 +619,9 @@ void Stmt(Node *n, Type retype){
 FieldList DefList(Node *n, int from){
 	if(n==NULL)
 		return NULL;
+#ifdef M_DEBUG
 	printf("%s\n",n->identifier);
-
+#endif
 	Node *child = n->child;
 	FieldList defList = NULL;
 
@@ -619,7 +646,9 @@ FieldList DefList(Node *n, int from){
 FieldList Def(Node *n, int from){
 	if(n==NULL)
 		return NULL;
+#ifdef M_DEBUG
 	printf("%s\n",n->identifier);
+#endif
 
 	Node *child = n->child;
 	// Specifier DecList SEMI
@@ -633,7 +662,9 @@ FieldList Def(Node *n, int from){
 FieldList DecList(Node *n, Type type, int from){
 	if(n==NULL)
 		return NULL;
+#ifdef M_DEBUG
 	printf("%s\n",n->identifier);
+#endif
 
 	Node *child = n->child;
 	FieldList decList = NULL;
@@ -661,7 +692,9 @@ FieldList DecList(Node *n, Type type, int from){
 FieldList Dec(Node *n, Type type, int from){
 	if(n==NULL)
 		return NULL;
+#ifdef M_DEBUG
 	printf("%s\n",n->identifier);
+#endif
 
 	Node *child = n->child;
 	FieldList dec = VarDec(child, type, from);
@@ -727,10 +760,14 @@ Type Exp(Node *n, Operand place){
 	int i=temVarNo;
 	if(n==NULL)
 		return NULL;
+#ifdef M_DEBUG
 	printf("%s\n",n->identifier);
+#endif
 
 	Node *child = n->child;
+#ifdef M_DEBUG
 	printf("%s\n",child->identifier);
+#endif
 	if(strcmp(child->identifier,"LP")==0){
 		//Exp->LP Exp RP
 		child = child->sibling;
@@ -738,10 +775,10 @@ Type Exp(Node *n, Operand place){
 	}
 	else if(strcmp(child->identifier,"MINUS")==0){
 		i++;
-		temVarNo++;		
 		Operand rightOp = malloc(sizeof(Operand_));
 		memset(rightOp, 0, sizeof(Operand_));
 		rightOp->u.var_no = temVarNo;
+		++temVarNo;
 		rightOp->kind = TEMPVAR;
 		int rightOpNo = rightOp->u.var_no;
 		i*=2;
@@ -887,10 +924,9 @@ Type Exp(Node *n, Operand place){
 							insertCode(funcCode);
 						}
 						else{
-							temVarNo++;
 							Operand uselessOp = malloc(sizeof(Operand_));
 							memset(uselessOp, 0, sizeof(Operand_));
-							uselessOp->u.var_no = temVarNo;
+							uselessOp->u.var_no = temVarNo++;
 							uselessOp->kind = TEMPVAR;
 
 							InterCode funcCode = malloc(sizeof(InterCode_));
@@ -916,7 +952,7 @@ Type Exp(Node *n, Operand place){
 					if(strcmp(func->u.function->name,"write")==0){
 						InterCode funcCode = malloc(sizeof(InterCode_));
 						memset(funcCode, 0, sizeof(InterCode_));
-						funcCode->u.sinop.op = argsListHead;
+						funcCode->u.sinop.op = argsListHead->next;
 						funcCode->kind = WRITE_N;
 						insertCode(funcCode);
 					}
@@ -943,10 +979,9 @@ Type Exp(Node *n, Operand place){
 							insertCode(funcCode);
 						}
 						else{
-							temVarNo++;
 							Operand uselessOp = malloc(sizeof(Operand_));
 							memset(uselessOp, 0, sizeof(Operand_));
-							uselessOp->u.var_no = temVarNo;
+							uselessOp->u.var_no = temVarNo++;
 							uselessOp->kind = TEMPVAR;
 
 							InterCode funcCode = malloc(sizeof(InterCode_));
@@ -998,14 +1033,13 @@ Type Exp(Node *n, Operand place){
 		if(strcmp(child->sibling->identifier,"ASSIGNOP")==0 ){
 			//Exp->Exp ASSIGNOP Exp
 
-			temVarNo += 2;
 			Operand leftOp = malloc(sizeof(Operand_));
 			memset(leftOp, 0, sizeof(Operand_));
-			leftOp->u.var_no = temVarNo;
+			leftOp->u.var_no = temVarNo++;
 			leftOp->kind = TEMPVAR;
 			Operand rightOp = malloc(sizeof(Operand_));
 			memset(rightOp, 0, sizeof(Operand_));
-			rightOp->u.var_no = temVarNo;
+			rightOp->u.var_no = temVarNo++;
 			rightOp->kind = TEMPVAR;
 			int rightOpNo = rightOp->u.var_no;
 
@@ -1059,14 +1093,13 @@ Type Exp(Node *n, Operand place){
 						strcmp(child->sibling->identifier,"DIV")==0){
 			//Exp->Exp AND|OR|RELOP|PLUS|MINUS|STAR|DIV Exp
 
-			temVarNo += 2;
 			Operand leftOp = malloc(sizeof(Operand_));
 			memset(leftOp, 0, sizeof(Operand_));
-			leftOp->u.var_no = temVarNo;
+			leftOp->u.var_no = temVarNo++;
 			leftOp->kind = TEMPVAR;
 			Operand rightOp = malloc(sizeof(Operand_));
 			memset(rightOp, 0, sizeof(Operand_));
-			rightOp->u.var_no = temVarNo;
+			rightOp->u.var_no = temVarNo++;
 			rightOp->kind = TEMPVAR;
 
 			Type lhs = Exp(child,leftOp);
@@ -1105,10 +1138,9 @@ Type Exp(Node *n, Operand place){
 			}
 		}
 		else if(strcmp(child->sibling->identifier,"LB")==0){
-				temVarNo++;
 				Operand baseOp = malloc(sizeof(Operand_));
 				memset(baseOp, 0, sizeof(Operand_));
-				baseOp->u.var_no = temVarNo;
+				baseOp->u.var_no = temVarNo++;
 				baseOp->kind = TEMPVAR;
 
 			//Exp->Exp LB Exp RB
@@ -1126,10 +1158,9 @@ Type Exp(Node *n, Operand place){
 				subscipt = atoi(child->sibling->sibling->child->value);
 			Operand subscriptOp=NULL;
 			if(subscipt!=0){
-				temVarNo++;
 				subscriptOp = malloc(sizeof(Operand_));
 				memset(subscriptOp, 0, sizeof(Operand_));
-				subscriptOp->u.var_no = temVarNo;
+				subscriptOp->u.var_no = temVarNo++;
 				subscriptOp->kind = TEMPVAR;
 			}
 
@@ -1142,10 +1173,9 @@ Type Exp(Node *n, Operand place){
 				return NULL;
 			}
 
-			temVarNo++;
 			Operand offsetOp = malloc(sizeof(Operand_));
 			memset(offsetOp, 0, sizeof(Operand_));
-			offsetOp->u.var_no = temVarNo;
+			offsetOp->u.var_no = temVarNo++;
 			offsetOp->kind = TEMPVAR;
 			if(subscipt!=0){
 				Operand wideOp = malloc(sizeof(Operand_));
@@ -1170,10 +1200,9 @@ Type Exp(Node *n, Operand place){
 				addrCode->u.binop.op2 = offsetOp;
 				addrCode->kind = ADD_N;
 				if(array->u.array.elem->kind==BASIC){
-					temVarNo++;
 					Operand temAddrOp = malloc(sizeof(Operand_));
 					memset(temAddrOp, 0, sizeof(Operand_));
-					temAddrOp->u.var_no = temVarNo;
+					temAddrOp->u.var_no = temVarNo++;
 					temAddrOp->kind = TEMPVAR;
 
 					addrCode->u.binop.result = temAddrOp;
@@ -1191,10 +1220,9 @@ Type Exp(Node *n, Operand place){
 				addrCode->u.assign.right = baseOp;
 				addrCode->kind = ASSIGN_N;
 				if(array->u.array.elem->kind==BASIC){
-					temVarNo++;
 					Operand temAddrOp = malloc(sizeof(Operand_));
 					memset(temAddrOp, 0, sizeof(Operand_));
-					temAddrOp->u.var_no = temVarNo;
+					temAddrOp->u.var_no = temVarNo++;
 					temAddrOp->kind = TEMPVAR;
 					addrCode->u.assign.left = temAddrOp;
 					place->u.addr = temAddrOp;
@@ -1212,10 +1240,9 @@ Type Exp(Node *n, Operand place){
 			return rtn;
 		}
 		else if(strcmp(child->sibling->identifier,"DOT")==0){
-			temVarNo++;
 			Operand strucVarOp = malloc(sizeof(Operand_));
 			memset(strucVarOp, 0, sizeof(Operand_));
-			strucVarOp->u.var_no = temVarNo;
+			strucVarOp->u.var_no = temVarNo++;
 			strucVarOp->kind = TEMPVAR;
 
 			//Exp->Exp DOT ID
@@ -1238,7 +1265,7 @@ Type Exp(Node *n, Operand place){
 						if(place!=NULL){
 							if(structDomain->type->kind==BASIC){
 								place->u.addr = strucVarOp;
-								place->kind = TADDRESS;
+								place->kind = VADDRESS;
 							}
 							else{
 								memcpy(place, strucVarOp, sizeof(Operand_));
@@ -1258,10 +1285,9 @@ Type Exp(Node *n, Operand place){
 						addrCode->u.binop.op2 = offsetOp;
 						addrCode->kind = ADD_N;
 						if(structure->kind==BASIC){
-							temVarNo++;
 							Operand temAddrOp = malloc(sizeof(Operand_));
 							memset(temAddrOp, 0, sizeof(Operand_));
-							temAddrOp->u.var_no = temVarNo;
+							temAddrOp->u.var_no = temVarNo++;
 							temAddrOp->kind = TEMPVAR;
 
 							addrCode->u.binop.result = temAddrOp;
@@ -1428,13 +1454,17 @@ Type Exp_Cond(Node *n,Operand label_true,Operand label_false)
 int Args(Node *n, FieldList param, Operand arg){
 	if(n==NULL)
 		return 1;
+#ifdef M_DEBUG
 	printf("%s\n",n->identifier);
+#endif
 	Operand t=malloc(sizeof(struct Operand_));
-	t->kind=TEMPVAR;
-	t->u.var_no=temVarNo++;
+	t->kind = TEMPVAR;
+	t->u.var_no = temVarNo++;
 	Node *child = n->child;
-	if(param==NULL)
-			return 1;
+	if(param==NULL){
+		printf("param==NULL\n");
+		return 1;
+	}
 
 	Type tmpParam = Exp(child,t);
 	t->next=arg->next;
@@ -1442,8 +1472,9 @@ int Args(Node *n, FieldList param, Operand arg){
 	if(typeEqual(param->type, tmpParam)==0){
 		if(child->sibling==NULL)
 				return 0;
-		else
+		else{
 				return Args(child->sibling->sibling, param->tail, arg);
+		}
 	}
 	else
 		return 2;
