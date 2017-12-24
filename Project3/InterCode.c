@@ -31,7 +31,9 @@ void insertCode(InterCode p){
 }
 
 void deleteCode(InterCode p){
-	assert(p!=NULL);
+	if(p==NULL)
+		exit(-1);
+	//assert(p!=NULL);
 	if(p==code_head){
 		code_head = p->next;
 	}

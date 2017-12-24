@@ -889,10 +889,11 @@ Type Exp(Node *n, Operand place){
 			else{
 
 				//--------------------------translate--------
-					Operand argsListHead =  NULL;
+				Operand argsListHead=malloc(sizeof(Operand_));
+				argsListHead->next=NULL;
 				//--------------------------translate--------
 
-				if(Args(child,param)!=0){  //比较两个类型是否匹配
+				if(Args(child,param,argsListHead)!=0){  //比较两个类型是否匹配
 					printf("Error type 9 at Line %d: Function \"%s\" is not applicable for arguments.\n", child->line, func->u.function->name);
 					return NULL;
 				}
@@ -902,7 +903,6 @@ Type Exp(Node *n, Operand place){
 						InterCode funcCode = malloc(sizeof(InterCode_));
 						memset(funcCode, 0, sizeof(InterCode_));
 						funcCode->kind = WRITE_N;
-						assert(argsListHead!=NULL);
 						funcCode->u.sinop.op = argsListHead;
 						insertCode(funcCode);
 					}
@@ -1320,7 +1320,7 @@ Type Exp(Node *n, Operand place){
 				}
 				structDomain = structDomain->tail;  //可能有错，找下一个
 
-				offset += sizeofType(structure);
+				offset += typeSize(structure);
 
 			}
 			printf("Error type 14 at Line %d: Non-existent field \"%s\".\n", child->line, child->value);
@@ -1338,10 +1338,10 @@ Type Exp_Cond(Node *n,Operand label_true,Operand label_false)
 {//printName(n->name);
 	Node *child = n->child;
 	Type type;
-	if(strcmp(child->name,"Exp")==0)
+	if(strcmp(child->identifier,"Exp")==0)
 	{
 		Node *child2=child->sibling;
-		if(strcmp(child2->name,"RELOP")==0)//< >
+		if(strcmp(child2->identifier,"RELOP")==0)//< >
 		{
 			//new temp
 			Operand t1=malloc(sizeof(Operand_));
@@ -1360,9 +1360,9 @@ Type Exp_Cond(Node *n,Operand label_true,Operand label_false)
 			{
 				InterCode code3=malloc(sizeof(InterCode_));
 				code3->kind=IFGOTO_N;
-				code3->u.triop.t1=t1;
+				code3->u.triop.x=t1;
 				code3->u.triop.op=child3->value;
-				code3->u.triop.t2=t2;
+				code3->u.triop.y=t2;
 				code3->u.triop.label=label_true;
 				insertCode(code3);		//code3
 
@@ -1374,7 +1374,7 @@ Type Exp_Cond(Node *n,Operand label_true,Operand label_false)
 			}
 			else
 			{
-				printf("Error type 7 at line %d: Operands type mismatched!\n",child->row);
+				printf("Error type 7 at line %d: Operands type mismatched!\n",child->line);
 				return NULL;
 			}
 
@@ -1433,7 +1433,7 @@ Type Exp_Cond(Node *n,Operand label_true,Operand label_false)
 		}
 
 	}
-	if(strcmp(child->name,"NOT")==0)	//not
+	if(strcmp(child->identifier,"NOT")==0)	//not
 	{
 		child=child->sibling;
 		Type t=Exp_Cond(child,label_false,label_true);
@@ -1470,13 +1470,13 @@ int Args(Node *n, FieldList param, Operand arg){
 	printf("%s\n",n->identifier);
 	Operand t=malloc(sizeof(struct Operand_));
 	t->kind=TEMPVAR;
-	t->u.var_no=varCount++;
+	t->u.var_no=temVarNo++;
 	Node *child = n->child;
 	if(param==NULL)
 			return 1;
 
 	Type tmpParam = Exp(child,t);
-	t->next=arg_list->next;
+	t->next=arg->next;
 	arg->next=t;
 	if(typeEqual(param->type, tmpParam)==0){
 		if(child->sibling==NULL)
