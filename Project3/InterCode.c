@@ -61,7 +61,8 @@ void printOp(Operand p, FILE* fp){
 			fputs(str, fp);
 			break;
 		case VARIABLE:
-			assert(p->u.value!=NULL);
+			if(p->u.value==NULL)
+				exit(-1);
 			sprintf(str, "%s ", p->u.value);
 			fputs(str, fp);
 			break;
