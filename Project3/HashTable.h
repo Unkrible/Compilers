@@ -11,7 +11,7 @@ typedef struct Entry_{
 	char *name;
 	Type type;
 	struct Entry_ *next;
-}Entry;
+} Entry;
 
 extern Entry *hashTable[HASH_SIZE];
 
