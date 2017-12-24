@@ -2,6 +2,7 @@
 #define SEMANTIC_H
 
 #include "SyntaxTree.h"
+#include "InterCode.h"
 
 #define BINGO 0
 #define ERROR_REDEFINE 1
