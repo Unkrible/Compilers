@@ -78,7 +78,7 @@ void printOp(Operand p, FILE* fp){
 			break;
 		case TADDRESS:
 			fputs("*t",fp);
-			sprintf(str,"%d",op->u.addr->u.var_no);
+			sprintf(str,"%d",p->u.addr->u.var_no);
 			fputs(str,fp);
 			break;
 		default:
@@ -93,7 +93,7 @@ void printCode(char* fileName){
 		return;
 	}
 	InterCode p;
-	for(p=code_head;p!=NULL;p=p->nextCode;){
+	for(p=code_head;p!=NULL;p=p->next){
 		switch(p->kind){
 			case ASSIGN_N:
 				printOp(p->u.assign.left, fp);
@@ -276,14 +276,14 @@ void deleteLabel()
 	head->no=-1;
 	head->next=NULL;
 	Label_No tail=head;
-	InterCode c=code_h;
+	InterCode c=code_head;
 
 	while(c!=NULL)
 	{
 		if(c->kind==GOTO_N)
 		{
 			Label_No temp=malloc(sizeof(struct Label_No_));
-			temp->no=c->u.one.op->u.var_no;
+			temp->no=c->u.sinop.op->u.var_no;
 			temp->next=NULL;
 			tail->next=temp;
 			tail=temp;
@@ -304,7 +304,7 @@ void deleteLabel()
 	{
 		if(c->kind==LABEL_N)
 		{
-			int no=c->u.one.op->u.var_no;
+			int no=c->u.sinop.op->u.var_no;
 			Label_No ln=head;
 			while(ln!=NULL)
 			{

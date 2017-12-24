@@ -745,7 +745,7 @@ Type Exp(Node *n, Operand place){
 		//--------------------------translate-----------------
 			Operand zeroOp =  malloc(sizeof(Operand_));
 			memset(zeroOp, 0, sizeof(Operand_));
-			zeroOp->kind = CONST_OP;
+			zeroOp->kind = CONSTANT;
 			zeroOp->u.value = zeroStr;
 			// place := #0 - Exp
 			if(place!=NULL){
@@ -784,7 +784,7 @@ Type Exp(Node *n, Operand place){
 		Type t=Exp_Cond(n,lb1,lb2);	//code1
 
 		InterCode lb1code=malloc(sizeof(InterCode_));
-		lb1code->kind=LABEL_K;
+		lb1code->kind=LABEL_N;
 		lb1code->u.sinop.op=lb1;
 		insertCode(lb1code);	//label 1
 
@@ -801,7 +801,7 @@ Type Exp(Node *n, Operand place){
 		lb2code->kind=LABEL_N;
 		lb2code->u.sinop.op=lb2;
 		insertCode(lb2code);
-		t->assign = RIGHT
+		t->assign = RIGHT;
 		return t;
 	}
 	else if(strcmp(child->identifier,"ID")==0){
@@ -847,7 +847,7 @@ Type Exp(Node *n, Operand place){
 				}
 				else{
 					//--------------------------translate----
-					if(strcmp(func->name,"read")==0){
+					if(strcmp(func->u.function->name,"read")==0){
 						if(place!=NULL){
 							InterCode funcCode = malloc(sizeof(InterCode_));
 							memset(funcCode, 0, sizeof(InterCode_));
@@ -860,7 +860,7 @@ Type Exp(Node *n, Operand place){
 						Operand funcOp = malloc(sizeof(Operand_));
 						memset(funcOp, 0, sizeof(Operand_));
 						funcOp->kind = FUNCTION_;
-						funcOp->u.value = func->name;
+						funcOp->u.value = func->u.function->name;
 						if(place!=NULL){
 							InterCode funcCode = malloc(sizeof(InterCode_));
 							memset(funcCode, 0, sizeof(InterCode_));
@@ -899,7 +899,7 @@ Type Exp(Node *n, Operand place){
 				}
 				else{
 					//--------------------------translate----
-					if(strcmp(func->name,"write")==0){
+					if(strcmp(func->u.function->name,"write")==0){
 						InterCode funcCode = malloc(sizeof(InterCode_));
 						memset(funcCode, 0, sizeof(InterCode_));
 						funcCode->kind = WRITE_N;
@@ -922,7 +922,7 @@ Type Exp(Node *n, Operand place){
 						Operand funcOp = malloc(sizeof(Operand_));
 						memset(funcOp, 0, sizeof(Operand_));
 						funcOp->kind = FUNCTION_;
-						funcOp->u.value = func->name;
+						funcOp->u.value = func->u.function->name;
 						if(place!=NULL){
 							InterCode funcCode = malloc(sizeof(InterCode_));
 							memset(funcCode, 0, sizeof(InterCode_));
@@ -1147,7 +1147,7 @@ Type Exp(Node *n, Operand place){
 					subscriptOp = malloc(sizeof(Operand_));
 					memset(subscriptOp, 0, sizeof(Operand_));
 					subscriptOp->kind = TEMPVAR;
-					subscriptOp->u.no = temVarNo;
+					subscriptOp->u.var_no = temVarNo;
 					temVarNo++;
 				}
 			//--------------------------translate-------------
@@ -1190,19 +1190,19 @@ Type Exp(Node *n, Operand place){
 					// 地址 := baseOp ADD offsetOp
 					InterCode addrCode = malloc(sizeof(InterCode_));
 					memset(addrCode, 0, sizeof(InterCode_));
-					addrCode->kind = ADD_CODE;
+					addrCode->kind = ADD_N;
 					addrCode->u.binop.op1 = baseOp;
 					addrCode->u.binop.op2 = offsetOp;
-					if(arraySym->u.array.elem->kind==BASIC){
+					if(array->u.array.elem->kind==BASIC){
 						//如果下一层是BASIC 则place是地址指向的位置
 						Operand temAddrOp = malloc(sizeof(Operand_));
 						memset(temAddrOp, 0, sizeof(Operand_));
 						temAddrOp->kind = TEMPVAR;
-						temAddrOp->u.no = temVarNo;
+						temAddrOp->u.var_no = temVarNo;
 						temVarNo++;
 
 						addrCode->u.binop.result = temAddrOp;
-						place->kind = ADDR_OP;
+						place->kind = TADDRESS;
 						place->u.addr = temAddrOp;
 					}
 					else{
@@ -1217,7 +1217,7 @@ Type Exp(Node *n, Operand place){
 					memset(addrCode, 0, sizeof(InterCode_));
 					addrCode->kind = ASSIGN_N;
 					addrCode->u.assign.right = baseOp;
-					if(arraySym->u.array.elem->kind==BASIC){
+					if(array->u.array.elem->kind==BASIC){
 						//如果下一层是BASIC 则place是地址指向的位置
 						Operand temAddrOp = malloc(sizeof(Operand_));
 						memset(temAddrOp, 0, sizeof(Operand_));
@@ -1271,7 +1271,7 @@ Type Exp(Node *n, Operand place){
 					//--------------------------translate-----
 					if(offset==0){
 						if(place!=NULL){
-							if(structDomain->kind==BASIC){
+							if(structDomain->type->kind==BASIC){
 								place->kind = TADDRESS;
 								place->u.addr = strucVarOp;
 							}
@@ -1294,7 +1294,7 @@ Type Exp(Node *n, Operand place){
 						addrCode->kind = ADD_N;
 						addrCode->u.binop.op1 = strucVarOp;
 						addrCode->u.binop.op2 = offsetOp;
-						if(strucField->kind==BASIC){
+						if(structure->kind==BASIC){
 							//如果下一层是BASIC 则place是地址指向的位置
 							Operand temAddrOp = malloc(sizeof(Operand_));
 							memset(temAddrOp, 0, sizeof(Operand_));
@@ -1321,7 +1321,7 @@ Type Exp(Node *n, Operand place){
 				}
 				structDomain = structDomain->tail;  //可能有错，找下一个
 
-				offset += sizeofType(strucField);
+				offset += sizeofType(structure);
 
 			}
 			printf("Error type 14 at Line %d: Non-existent field \"%s\".\n", child->line, child->value);
@@ -1466,21 +1466,25 @@ Type Exp_Cond(Node *n,Operand label_true,Operand label_false)
 	return type;
 }
 
-int Args(Node *n, FieldList param){
+int Args(Node *n, FieldList param, Operand arg){
 	if(n==NULL)
 		return 1;
 	printf("%s\n",n->identifier);
-
+	Operand t=malloc(sizeof(struct Operand_));
+	t->kind=TEMPVAR;
+	t->u.var_no=varCount++
 	Node *child = n->child;
 	if(param==NULL)
 			return 1;
 
-	Type tmpParam = Exp(child);
+	Type tmpParam = Exp(child,t);
+	t->next=arg_list->next;
+	arg->next=t;
 	if(typeEqual(param->type, tmpParam)==0){
 		if(child->sibling==NULL)
 				return 0;
 		else
-				return Args(child->sibling->sibling, param->tail);
+				return Args(child->sibling->sibling, param->tail, arg);
 	}
 	else
 		return 2;
