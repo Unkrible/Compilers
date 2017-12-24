@@ -50,7 +50,9 @@ void deleteCode(InterCode p){
 }
 
 void printOp(Operand p, FILE* fp){
-	assert(p!=NULL);
+	if(p==NULL)
+		exit(-1);
+	//assert(p!=NULL);
 	char str[50];
 	memset(str, 0, sizeof(str));
 	switch(p->kind){

@@ -1099,7 +1099,7 @@ Type Exp(Node *n, Operand place){
 					else if(strcmp(child->sibling->identifier,"DIV")==0)
 						calcCode->kind=DIV_N;
 					else
-						assert(0);
+						exit(-3);
 					calcCode->u.binop.result = place;
 					calcCode->u.binop.op1 = leftOp;
 					calcCode->u.binop.op2 = rightOp;
@@ -1417,7 +1417,7 @@ Type Exp_Cond(Node *n,Operand label_true,Operand label_false)
 
 			InterCode lb1code=malloc(sizeof(InterCode_));
 			lb1code->kind=LABEL_N;
-			lb1code->u.one.op=lb1;
+			lb1code->u.sinop.op=lb1;
 			insertCode(lb1code);		//label 1
 
 			Type t2=Exp_Cond(child2,label_true,label_false);	//code2
@@ -1426,7 +1426,7 @@ Type Exp_Cond(Node *n,Operand label_true,Operand label_false)
 				return t;
 			else
 			{
-				printf("Error type 7 at line %d: Operands type mismatched!!!\n",child->row);
+				printf("Error type 7 at line %d: Operands type mismatched!!!\n",child->line);
 				return NULL;
 			}
 
