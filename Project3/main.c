@@ -42,7 +42,7 @@ int main(int argc, char** argv){
 		optimizeGoto();
 		deleteLabel();
 		figureCon();
-		printCode("testcase.ir");
+		printCode(argv[2]);
 	}
 
 	cleanTree(tree);
