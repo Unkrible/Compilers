@@ -17,6 +17,32 @@ void initTable(){
 	for(;i<HASH_SIZE;i++){
 		hashTable[i]=NULL;
 	}
+	Function read=malloc(sizeof(struct Function_));
+	read->name=malloc(16);
+	memset(read->name, 0, sizeof(read->name));
+	strcpy(read->name,"read");
+	read->isDefined=true;
+	read->line=0;
+	read->retype=malloc(sizeof(struct Type_));
+	read->retype->kind=BASIC;
+	read->retype->u.basic=TYPE_INT;
+	read->param=NULL;
+	funcInsertTable(read);
+	Function write=malloc(sizeof(struct Function_));
+	write->name=malloc(16);
+	memset(write->name, 0, sizeof(write->name));
+	strcpy(write->name,"write");
+	write->isDefined=true;
+	write->line=0;
+	write->retype=malloc(sizeof(struct Type_));
+	write->retype->kind=BASIC;
+	write->retype->u.basic=TYPE_INT;
+	write->param=malloc(sizeof(struct FieldList_));
+	wirte->param->name = malloc(16);
+	strcpy(wirte->param->name,"write_param");
+	wirte->param->type=wirte->retype;
+	wirte->param->tail=NULL;
+	funcInsertTable(read);
 }
 
 int varInsertTable(FieldList value){
@@ -26,14 +52,14 @@ int varInsertTable(FieldList value){
 
 	unsigned int hashValue = 0;
 	hashValue = hashPJW(value->name)%HASH_SIZE;
-	
+
 	Entry *curEntry = (Entry *)malloc(sizeof(Entry));
 	curEntry->next = hashTable[hashValue];
 	hashTable[hashValue] = curEntry;
-	
+
 	curEntry->type = value->type;
 	curEntry->name = value->name;
-	
+
 	return 1;
 }
 
@@ -107,7 +133,7 @@ int funcInsertCheck(Function func){
 
 	if(hashTable==NULL || func==NULL)
 			return BINGO;
-	
+
 	unsigned int hashValue = hashPJW(func->name)%HASH_SIZE;
 	Entry *tmp = hashTable[hashValue];
 	for(;tmp!=NULL;tmp=tmp->next){
@@ -125,7 +151,7 @@ int funcInsertCheck(Function func){
 		else{
 				tmpFunc->isDefined = func->isDefined;
 				return FUNC_IS_DECLARED;
-		} 
+		}
 	}
 	return BINGO;
 }
@@ -133,7 +159,7 @@ int funcInsertCheck(Function func){
 int structInsertCheck(Structure structure){
 	if(hashTable==NULL || structure==NULL)
 			return BINGO;
-	
+
 	unsigned int hashValue = hashPJW(structure->name)%HASH_SIZE;
 	Entry *tmp = hashTable[hashValue];
 	for(;tmp!=NULL;tmp=tmp->next){
@@ -146,7 +172,7 @@ int structInsertCheck(Structure structure){
 }
 
 Type getTable(char *name){
-	
+
 	if(hashTable==NULL || name==NULL)
 			return NULL;
 

@@ -824,7 +824,6 @@ Type Exp(Node *n, Operand place){
 		}
 		else{
 			//Exp->ID LP RP | ID LP Args RP
-			/*
 			Type func = getTable(child->value);   //判断是否定义过
 			if(func==NULL){
 				printf("Error type 2 at Line %d: Undefined function \"%s\".\n", child->line, child->value);
@@ -838,7 +837,6 @@ Type Exp(Node *n, Operand place){
 				printf("Error type 2 at Line %d: Undefined function \"%s\".\n", child->line, child->value);
 				return NULL;
 			}
-			*/
 			FieldList param = func->u.function->param;
 			child = child->sibling->sibling;
 			if(strcmp(child->identifier,"RP")==0){
