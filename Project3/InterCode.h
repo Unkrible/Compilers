@@ -1,6 +1,8 @@
 #ifndef _INTERCODE_H
 #define _INTERCODE_H
 
+#include <assert.h>
+
 typedef struct Operand_* Operand;
 typedef struct InterCode_* InterCode;
 typedef struct Label_No_* Label_No;
