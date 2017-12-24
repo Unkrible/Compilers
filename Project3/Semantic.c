@@ -349,7 +349,7 @@ FieldList VarDec(Node *n, Type type, int from){
 				return NULL;
 		}
 		else{
-			if(type->kind==STRUCTURE && from==FROM_FIELD)
+			if(type->kind==STRUCTURE && from==FROM_FIELD){
 				Operand op=malloc(sizeof(Operand_));
 				op->kind = TEMPVAR;
 				op->u.var_no = temVarNo++;
@@ -369,6 +369,7 @@ FieldList VarDec(Node *n, Type type, int from){
 				addrcode->u.assign.left = v;
 				addrcode->u.assign.right = op;
 				insertCode(addrcode);
+			}
 				varInsertTable(varDec);
 		}
 		return varDec;
@@ -475,7 +476,7 @@ void Stmt(Node *n, Type retype){
 	Node *child = n->child;
 	// Exp SEMI
 	if(strcmp(child->identifier, "Exp")==0){
-		Exp(child);
+		Exp(child,NULL);
 	}
 	// CompSt
 	else if(strcmp(child->identifier, "CompSt")==0){
@@ -486,7 +487,7 @@ void Stmt(Node *n, Type retype){
 		Operand op=malloc(sizeof(Operand_));
 		op->kind = TEMPVAR;
 		op->u.var_no= temVarNo++;
-		Type expType=Exp(child->sibling);
+		Type expType=Exp(child->sibling,op);
 		if(expType==NULL||retype==NULL) return;
 		if(typeEqual(retype,expType)!=0){
 			printf("Error type 8 at Line %d: Type mismatched for return.\n",child->line);
