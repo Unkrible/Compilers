@@ -42,7 +42,7 @@ void initTable(){
 	strcpy(write->param->name,"write_param");
 	write->param->type=write->retype;
 	write->param->tail=NULL;
-	funcInsertTable(read);
+	funcInsertTable(write);
 }
 
 int varInsertTable(FieldList value){
