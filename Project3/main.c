@@ -39,6 +39,7 @@ int main(int argc, char** argv){
 		initTable();
 //		traverseTree(tree);
 		Program(tree);
+		printCode("testcase.ir")
 	}
 
 	cleanTree(tree);
