@@ -21,7 +21,7 @@ void initTable(){
 	read->name=malloc(16);
 	memset(read->name, 0, sizeof(read->name));
 	strcpy(read->name,"read");
-	read->isDefined=true;
+	read->isDefined=1;
 	read->line=0;
 	read->retype=malloc(sizeof(struct Type_));
 	read->retype->kind=BASIC;
@@ -32,7 +32,7 @@ void initTable(){
 	write->name=malloc(16);
 	memset(write->name, 0, sizeof(write->name));
 	strcpy(write->name,"write");
-	write->isDefined=true;
+	write->isDefined=1;
 	write->line=0;
 	write->retype=malloc(sizeof(struct Type_));
 	write->retype->kind=BASIC;
