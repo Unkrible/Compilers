@@ -142,7 +142,6 @@ void ExtDef(Node *n){
 		Function func=FunDec(child,type);
 
 		child = child->sibling;
-		int i=0;
 		// Specifier FunDec CompSt
 		if(strcmp(child->identifier,"CompSt")==0){
 			if(func==NULL)
@@ -154,25 +153,21 @@ void ExtDef(Node *n){
 			else if(flag==ERROR_DECLARATION_CONFLICT)
 					printf("Error type 19 at Line %d: Inconsistent declaration of function \"%s\"\n",func->line,func->name);
 			else if(flag!=FUNC_IS_DECLARED){
-				i=0;
 				funcInsertTable(func);
 				Operand funcop=malloc(sizeof(Operand_));
 				funcop->kind = FUNCTION_;
 				funcop->u.value = func->name;
 				InterCode code=malloc(sizeof(InterCode_));
-				i++;
 				code->kind = FUNCTION_N;
 				code->u.sinop.op = funcop;
 				insertCode(code);		//funtion  :
 				FieldList param=func->param;
-				i=0;
 				while(param!=NULL)
 				{
 					Operand pop=malloc(sizeof(Operand_));
 					pop->kind=VARIABLE;
 					pop->u.value = param->name;
 					InterCode pcode = malloc(sizeof(InterCode_));
-					i++;
 					pcode->kind = PARAM_N;
 					pcode->u.sinop.op=pop;
 					insertCode(pcode);
@@ -205,7 +200,6 @@ void ExtDecList(Node *n, Type type){
 #ifdef M_DEBUG
 	printf("%s\n",n->identifier);
 #endif
-	int i=0;
 	Node *child = n->child;
 	if(child == NULL)
 			return;
@@ -217,17 +211,14 @@ void ExtDecList(Node *n, Type type){
 			Operand op=malloc(sizeof(Operand_));
 			op->kind = TEMPVAR;
 			op->u.var_no = temVarNo++;
-			i++;
 			InterCode deccode=malloc(sizeof(InterCode_));
 			deccode->kind=DEC_N;
 			deccode->u.dec.op = op;
 			deccode->u.dec.size=typeSize(fl->type);
 			insertCode(deccode);
-			i*=3;
 			Operand v=malloc(sizeof(Operand_));
 			v->kind = VARIABLE;
 			v->u.value = fl->name;
-			i+=5;
 			InterCode addrcode = malloc(sizeof(InterCode_));
 			addrcode->kind = ADDRESS_N;
 			addrcode->u.assign.left = v;
@@ -368,21 +359,17 @@ FieldList VarDec(Node *n, Type type, int from){
 		}
 		else{
 			if(type->kind==STRUCTURE && from==FROM_FIELD){
-				int i=0;
 				Operand op=malloc(sizeof(Operand_));
 				op->kind = TEMPVAR;
 				op->u.var_no = temVarNo++;
-				i++;
 				InterCode deccode=malloc(sizeof(InterCode_));
 				deccode->kind = DEC_N;
 				deccode->u.dec.op = op;
 				deccode->u.dec.size = typeSize(type);
 				insertCode(deccode);
-				i--;
 				Operand v=malloc(sizeof(Operand_));
 				v->kind = VARIABLE;
 				v->u.value = child->value;
-				i=sizeof(InterCode_);
 				InterCode addrcode=malloc(sizeof(InterCode_));
 				addrcode->kind = ADDRESS_N;
 				addrcode->u.assign.left = v;
@@ -515,12 +502,9 @@ void Stmt(Node *n, Type retype){
 	}
 	// RETURN Exp SEMI
 	else if(strcmp(child->identifier, "RETURN")==0){
-		int i=temVarNo;
 		Operand op=malloc(sizeof(Operand_));
 		op->kind = TEMPVAR;
 		op->u.var_no= temVarNo++;
-		if(i==0)
-			i++;
 		Type expType=Exp(child->sibling,op);
 		if(expType==NULL||retype==NULL) return;
 		if(typeEqual(retype,expType)!=0){
@@ -528,28 +512,23 @@ void Stmt(Node *n, Type retype){
 		}
 		InterCode code = malloc(sizeof(InterCode_));
 		code->kind = RETURN_N;
-		i--;
 		code->u.sinop.op = op;
 		insertCode(code);
 	}
 	// IF LP Exp Stmt (ELSE Stmt)?
 	else if(strcmp(child->identifier, "IF")==0){
-		int i=0;
 		child = child->sibling->sibling;
 		Operand lb1 = malloc(sizeof(Operand_));
 		lb1->kind = LABEL;
 		lb1->u.var_no = labelNo++;
-		i+=temVarNo;
 		Operand lb2 = malloc(sizeof(Operand_));
 		lb2->kind = LABEL;
 		lb2->u.var_no = labelNo++;
 		Type expType = Exp_Cond(child,lb1,lb2);
-		i--;
 		InterCode code1=malloc(sizeof(InterCode_));
 		code1->kind=LABEL_N;
 		code1->u.sinop.op=lb1;
 		insertCode(code1);
-		i=temVarNo;
 		child = child->sibling->sibling;
 		Stmt(child, retype);
 		InterCode lb2code = malloc(sizeof(InterCode_));
@@ -569,7 +548,6 @@ void Stmt(Node *n, Type retype){
 		insertCode(code2);			//goto label3
 		insertCode(lb2code);		//label2
 		child = child->sibling;
-		i++;
 		Stmt(child, retype);
 		InterCode lb3code=malloc(sizeof(InterCode_));
 		lb3code->kind = LABEL_N;
@@ -578,11 +556,9 @@ void Stmt(Node *n, Type retype){
 	}
 	// WHILE LP Exp RP Stmt
 	else if(strcmp(child->identifier, "WHILE")==0){
-		int i=temVarNo;
 		Operand lb1=malloc(sizeof(Operand_));
 		lb1->kind = LABEL;
 		lb1->u.var_no = labelNo++;
-		i++;
 		Operand lb2=malloc(sizeof(Operand_));
 		lb2->kind = LABEL;
 		lb2->u.var_no = labelNo++;
@@ -590,14 +566,11 @@ void Stmt(Node *n, Type retype){
 		lb3->kind = LABEL;
 		lb3->u.var_no = labelNo++;
 		child = child->sibling->sibling;
-		i++;
 		InterCode lb1code = malloc(sizeof(InterCode_));
 		lb1code->kind = LABEL_N;
 		lb1code->u.sinop.op = lb1;
 		insertCode(lb1code);		//label 1
 		Exp_Cond(child,lb2,lb3);	//code1
-		if(i==0)
-			i=temVarNo;
 		InterCode lb2code=malloc(sizeof(InterCode_));
 		lb2code->kind = LABEL_N;
 		lb2code->u.sinop.op = lb2;
@@ -757,7 +730,6 @@ FieldList Dec(Node *n, Type type, int from){
 
 /* Expressions */
 Type Exp(Node *n, Operand place){
-	int i=temVarNo;
 	if(n==NULL)
 		return NULL;
 #ifdef M_DEBUG
@@ -774,14 +746,12 @@ Type Exp(Node *n, Operand place){
 		return Exp(child,place);
 	}
 	else if(strcmp(child->identifier,"MINUS")==0){
-		i++;
 		Operand rightOp = malloc(sizeof(Operand_));
 		memset(rightOp, 0, sizeof(Operand_));
 		rightOp->u.var_no = temVarNo;
 		++temVarNo;
 		rightOp->kind = TEMPVAR;
 		int rightOpNo = rightOp->u.var_no;
-		i*=2;
 		//Exp->MINUS Exp
 		child = child->sibling;
 		Type type = NULL;
@@ -795,7 +765,6 @@ Type Exp(Node *n, Operand place){
 
 		Operand zeroOp =  malloc(sizeof(Operand_));
 		memset(zeroOp, 0, sizeof(Operand_));
-		i--;
 		zeroOp->u.value = zeroStr;
 		zeroOp->kind = CONSTANT;
 		if(place!=NULL){
@@ -803,7 +772,6 @@ Type Exp(Node *n, Operand place){
 			memset(minusCode, 0, sizeof(InterCode_));
 			minusCode->u.binop.op1 = zeroOp;
 			minusCode->u.binop.op2 = rightOp;
-			i++;
 			minusCode->u.binop.result = place;
 			minusCode->kind = SUB_N;
 			insertCode(minusCode);
@@ -821,14 +789,12 @@ Type Exp(Node *n, Operand place){
 		Operand lb2=malloc(sizeof(Operand_));
 		lb2->u.var_no=labelNo++;
 		lb2->kind=LABEL;
-		i+=2;
 		InterCode code0=malloc(sizeof(InterCode_));
 		code0->u.assign.left=place;
 		code0->kind=ASSIGN_N;
 		Operand c0=malloc(sizeof(Operand_));
 		c0->u.value= zeroStr;
 		c0->kind=CONSTANT;
-		i=temVarNo;
 		code0->u.assign.right=c0;
 		if(place!=NULL)
 			insertCode(code0);
@@ -843,7 +809,6 @@ Type Exp(Node *n, Operand place){
 		c1->u.value=oneStr;
 		c1->kind=CONSTANT;
 		InterCode code2=malloc(sizeof(InterCode_));
-		i=0;
 		code2->u.assign.left=place;
 		code2->u.assign.right=c1;
 		code2->kind=ASSIGN_N;
@@ -852,7 +817,6 @@ Type Exp(Node *n, Operand place){
 		InterCode lb2code=malloc(sizeof(InterCode_));
 		lb2code->u.sinop.op=lb2;
 		lb2code->kind=LABEL_N;
-		i++;
 		insertCode(lb2code);
 		t->assign = RIGHT;
 		return t;
@@ -903,7 +867,6 @@ Type Exp(Node *n, Operand place){
 							InterCode funcCode = malloc(sizeof(InterCode_));
 							memset(funcCode, 0, sizeof(InterCode_));
 							funcCode->u.sinop.op = place;
-							i=temVarNo;
 							funcCode->kind = READ_N;
 							insertCode(funcCode);
 						}
@@ -912,14 +875,12 @@ Type Exp(Node *n, Operand place){
 						Operand funcOp = malloc(sizeof(Operand_));
 						memset(funcOp, 0, sizeof(Operand_));
 						funcOp->u.value = func->u.function->name;
-						i++;
 						funcOp->kind = FUNCTION_;
 						if(place!=NULL){
 							InterCode funcCode = malloc(sizeof(InterCode_));
 							memset(funcCode, 0, sizeof(InterCode_));
 							funcCode->u.assign.left = place;
 							funcCode->u.assign.right = funcOp;
-							i--;
 							funcCode->kind = CALL_N;
 							insertCode(funcCode);
 						}
