@@ -10,6 +10,7 @@ unsigned int hashPJW(char *name){
 				val = (val^(i>>12))&0x3fff;
 	}
 	return val;
+
 }
 
 void initTable(){
