@@ -42,7 +42,7 @@ int main(int argc, char** argv){
 		optimizeGoto();
 		deleteLabel();
 		figureCon();
-		printCode(argv[2]);
+		printMips(argv[2]);
 	}
 
 	cleanTree(tree);
