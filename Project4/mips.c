@@ -28,7 +28,7 @@ void printMips(char *fileName){
 	fputs("\tla $a0, _ret\n", fp);
 	fputs("\tsyscall\n", fp);
 	fputs("\tmove $v0, $0\n", fp);
-	fputs("\tjr $ra\n", fp);
+	fputs("\tjr $ra\n\n", fp);
 
 	InterCode itor = code_head;
 	while(itor != NULL){
@@ -200,15 +200,24 @@ void mipsOperation(InterCode interCode){
 }
 
 void mipsRead(InterCode interCode){
+	fputs("\tsubu $sp, $sp, 4\n", fp);
+	fputs("\tsw $ra, 0($sp)\n", fp);
+	
 	int x = getReg(interCode->u.sinop.op);
 	char str[STR_LENGTH];
 	memset(str, 0, sizeof(str));
 	sprintf(str, "\tjal read\n\tmove %s, $v0\n", printReg(x));
 	fputs(str, fp);
 	swReg(x);
+
+	fputs("\tlw $ra, 0($sp)\n", fp);
+	fputs("\taddi $sp, $sp, 4\n", fp);
 }
 
 void mipsWrite(InterCode interCode){
+	fputs("\tsubu $sp, $sp, 4\n", fp);
+	fputs("\tsw $ra, 0($sp)\n", fp);
+
 	char str[STR_LENGTH];
 	memset(str, 0, sizeof(str));
 	int r = getReg(interCode->u.sinop.op);
@@ -216,6 +225,9 @@ void mipsWrite(InterCode interCode){
 	sprintf(str, "\tmove $a0, %s\n\tjal write\n", printReg(r));
 	fputs(str, fp);
 	swReg(r);
+	
+	fputs("\tlw $ra, 0($sp)\n", fp);
+	fputs("\taddi $sp, $sp, 4\n", fp);
 }
 
 void mipsCall(InterCode interCode){
@@ -232,8 +244,8 @@ void mipsCall(InterCode interCode){
 	sprintf(str, "\tjal %s\n\tmove %s, $v0\n", func->u.value, printReg(x));
 	fputs(str, fp);
 	swReg(x);
-	fputs("\tlw $ra, 0($sp)", fp);
-	fputs("\taddi $sp, $sp, 4", fp);
+	fputs("\tlw $ra, 0($sp)\n", fp);
+	fputs("\taddi $sp, $sp, 4\n", fp);
 }
 
 void mipsReturn(InterCode interCode){
@@ -246,7 +258,7 @@ void mipsReturn(InterCode interCode){
 		// jr $ra
 		sprintf(str, "\tmove $v0, %s\n\taddi $sp, $sp, %d\n\tlw $fp, 0($sp)\n\taddi $sp, $sp, 4\n\tjr $ra\n", printReg(x), stackSize);
 	} else {
-		sprintf(str, "\tmove $v0, %s\n\taddi $sp, $sp, %d\n\tlw $fp, 0($sp)\n\taddi $sp, $sp, 4\n\tjr $ra\n", op->u.value, stackSize);
+		sprintf(str, "\tmove $v0, $%s\n\taddi $sp, $sp, %d\n\tlw $fp, 0($sp)\n\taddi $sp, $sp, 4\n\tjr $ra\n", op->u.value, stackSize);
 	}
 	fputs(str, fp);
 }
@@ -255,7 +267,7 @@ void mipsGOTO(InterCode interCode){
 	char str[STR_LENGTH];
 	memset(str, 0, sizeof(str));
 	// j x
-	sprintf(str, "\tj label%d:\n",interCode->u.sinop.op->u.var_no);
+	sprintf(str, "\tj label%d\n",interCode->u.sinop.op->u.var_no);
 	fputs(str, fp);
 }
 
