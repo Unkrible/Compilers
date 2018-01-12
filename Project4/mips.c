@@ -313,14 +313,20 @@ void mipsArg(InterCode interCode){
 	char str[STR_LENGTH];
 	memset(str, 0, sizeof(str));
 	Operand op = interCode->u.sinop.op;
-	char argName[20];
-	memset(argName, 0, 20);
-	sprintf(argName, "t%d", op->u.var_no);
-	Var_t *arg = findVar(argName);
+	Var_t *arg=NULL;
+	if(op->kind == TEMPVAR){
+		char argName[20];
+		memset(argName, 0, 20);
+		sprintf(argName, "t%d", op->u.var_no);
+		arg = findVar(argName);
+	} else if(op->kind ==VARIABLE){
+		arg = findVar(op->u.value);
+	}
 	if(arg == NULL)
 		exit(-1);
 	sprintf(str, "\tlw $a%d, %d($fp)\n", curParam, arg->offset);
 	fputs(str, fp);
+	//TODO: add param if curParam>4
 	++curParam;
 	if(interCode->next==NULL || interCode->next->kind!=ARG_N){
 		curParam = 0;
@@ -332,16 +338,14 @@ void mipsParam(InterCode interCode){
 	memset(str, 0, sizeof(str));
 
 	Var_t* param = malloc(sizeof(Var_t));
-	param->name = malloc(sizeof(32));
-	memset(param, 0, sizeof(param->name));
-	sprintf(param->name, "v%d", interCode->u.sinop.op->u.var_no);
+	param->name = interCode->u.sinop.op->u.value;
 	spOffset -= 4;
 	param->offset = spOffset;
 	addVar(param);
 
 	sprintf(str, "\tsw $a%d, %d($fp)\n", curParam, param->offset);
 	fputs(str, fp);
-
+	//TODO: add param if curParam>4
 	++curParam;
 }
 
