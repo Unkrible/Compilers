@@ -85,7 +85,7 @@ void printMipsCode(InterCode interCode){
 }
 
 void mipsLabel(InterCode interCode){
-	char str[50];
+	char str[STR_LENGTH];
 	memset(str, 0, sizeof(str));
 	// x:
 	sprintf(str, "label%d:\n",interCode->u.sinop.op->u.var_no);
@@ -291,6 +291,7 @@ void mipsFunction(InterCode interCode){
 	fputs(str, fp);
 	spOffset = 0;
 	curParam = 0;
+				printf("here\n");
 }
 
 void mipsArg(InterCode interCode){

@@ -12,7 +12,7 @@ syntax:
 	bison -d syntax.y
 
 clean:
-	rm lex.yy.c lex.o syntax.tab.c syntax.tab.h parser
+	rm lex.yy.c lex.o syntax.tab.c syntax.tab.h parser out1.s out2.s
 
 remake:
 	make clean
