@@ -312,7 +312,7 @@ void mipsIFGOTO(InterCode interCode){
 		} else if(strcmp(op, "<=")==0){
 			sprintf(str, "\tbge %s, %s, label%d\n", printReg(y), leftOp->u.value, label->u.var_no);
 		}
-	} else if(right->kind == CONSTANT && leftOp->kind != CONSTANT){
+	} else if(rightOp->kind == CONSTANT && leftOp->kind != CONSTANT){
 		int x = getReg(leftOp);
 		// bxx reg(x), reg(y), z
 		if(strcmp(op, "==")==0){
