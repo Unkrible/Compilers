@@ -358,12 +358,12 @@ void mipsArg(InterCode interCode){
 	}
 	if(arg == NULL)
 		exit(-1);
-	sprintf(str, "\tlw $a%d, %d($fp)\n", curParam, arg->offset);
+	sprintf(str, "\tlw $a%d, %d($fp)\n", curArg, arg->offset);
 	fputs(str, fp);
-	//TODO: add param if curParam>4
-	++curParam;
+	//TODO: add param if curArg>4
+	++curArg;
 	if(interCode->next==NULL || interCode->next->kind!=ARG_N){
-		curParam = 0;
+		curArg = 0;
 	}
 }
 
@@ -486,6 +486,7 @@ FILE *fp = NULL;
 int curReg = 0;
 int spOffset = 0;
 int curParam = 0;
+int curArg = 0;
 const int stackSize = 100;
 
 char* regName[] = {

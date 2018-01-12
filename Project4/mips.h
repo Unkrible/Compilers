@@ -58,6 +58,7 @@ extern Var_t *varList;
 extern int curReg;
 extern int spOffset;
 extern int curParam;
+extern int curArg;
 extern const int stackSize;
 
 #endif

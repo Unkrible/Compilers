@@ -918,7 +918,7 @@ Type Exp(Node *n, Operand place){
 						insertCode(funcCode);
 					}
 					else{
-						Operand argsP = argsListHead;
+						Operand argsP = argsListHead->next;
 						while(argsP!=NULL){
 							InterCode argCode = malloc(sizeof(InterCode_));
 							memset(argCode, 0, sizeof(InterCode_));
