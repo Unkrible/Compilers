@@ -2,7 +2,7 @@ parser:
 	bison -d syntax.y
 	flex lexical.l
 	gcc -c lex.yy.c -o lex.o
-	gcc main.c syntax.tab.c SyntaxTree.c HashTable.c Semantic.c InterCode.c lex.o -lfl -ly -o parser
+	gcc main.c syntax.tab.c SyntaxTree.c HashTable.c Semantic.c InterCode.c mips.c lex.o -lfl -ly -o parser
 
 lexical:
 	bison -d syntax.y
@@ -17,7 +17,3 @@ clean:
 remake:
 	make clean
 	make
-
-test:
-	./parser ./testcase/testcase1.txt out1.ir
-	./parser ./testcase/testcase2.txt out2.ir

@@ -3,6 +3,7 @@
 #include "HashTable.h"
 #include "Semantic.h"
 #include "InterCode.h"
+#include "mips.h"
 #include "string.h"
 
 Node *tree;
