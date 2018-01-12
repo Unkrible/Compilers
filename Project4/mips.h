@@ -40,6 +40,7 @@ void mipsFunction(InterCode interCode);
 void mipsArg(InterCode interCode);
 void mipsParam(InterCode interCode);
 void mipsDec(InterCode interCode);
+void mipsAddress(InterCode interCode);
 
 void initRegs();
 int getReg(Operand op);
