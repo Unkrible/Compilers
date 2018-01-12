@@ -38,6 +38,7 @@ void printMips(char *fileName){
 }
 
 void printMipsCode(InterCode interCode){
+		printf("%d\n", interCode->kind);
 	switch (interCode->kind) {
 		case LABEL_N:
 			mipsLabel(interCode);
@@ -291,7 +292,6 @@ void mipsFunction(InterCode interCode){
 	fputs(str, fp);
 	spOffset = 0;
 	curParam = 0;
-				printf("here\n");
 }
 
 void mipsArg(InterCode interCode){
@@ -422,6 +422,7 @@ Var_t* findVar(char *name){
 			if(strcmp(ptr->name, name)==0){
 				break;
 			}
+			ptr = ptr->next;
 		}
 		return ptr;
 }
