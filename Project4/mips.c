@@ -6,7 +6,7 @@ void printMips(char *fileName){
 		printf("ERROR: Can not open file \"%s\".", fileName);
 		return;
 	}
-
+	initRegs();
 	fputs(".data\n", fp);
 	fputs("_prompt: .asciiz \"Enter an integer:\"\n", fp);
 	fputs("_ret: .asciiz \"\\n\"\n", fp);
@@ -200,13 +200,12 @@ void mipsOperation(InterCode interCode){
 }
 
 void mipsRead(InterCode interCode){
+	int x = getReg(interCode->u.sinop.op);
 	char str[STR_LENGTH];
 	memset(str, 0, sizeof(str));
-	int r = getReg(interCode->u.sinop.op);
-
-	sprintf(str, "jal read\nmove %s, $v0", printReg(r));
+	sprintf(str, "jal read\nmove %s, $v0\n", printReg(x));
 	fputs(str, fp);
-	swReg(r);
+	swReg(x);
 }
 
 void mipsWrite(InterCode interCode){
@@ -241,10 +240,14 @@ void mipsReturn(InterCode interCode){
 	char str[STR_LENGTH];
 	memset(str, 0, sizeof(str));
 	Operand op = interCode->u.sinop.op;
-	int x = getReg(op);
-	// move $v0, reg(x)
-	// jr $ra
-	sprintf(str, "move $v0, %s\naddi $sp, $sp, %d\nlw $fp, 0($sp)\naddi $sp, $sp, 4\njr $ra\n", printReg(x), stackSize);
+	if(op->kind!=CONSTANT){
+		int x = getReg(op);
+		// move $v0, reg(x)
+		// jr $ra
+		sprintf(str, "move $v0, %s\naddi $sp, $sp, %d\nlw $fp, 0($sp)\naddi $sp, $sp, 4\njr $ra\n", printReg(x), stackSize);
+	} else {
+		sprintf(str, "move $v0, %s\naddi $sp, $sp, %d\nlw $fp, 0($sp)\naddi $sp, $sp, 4\njr $ra\n", op->u.value, stackSize);
+	}
 	fputs(str, fp);
 }
 
