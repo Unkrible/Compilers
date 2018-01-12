@@ -8,6 +8,8 @@ int typeEqual(Type lhs, Type rhs){
 		return 0;
 	if(lhs==NULL || rhs==NULL)
 		return 1;
+	if(lhs == rhs)
+		return 0;
 	if(lhs->kind != rhs->kind)
 		return 2;
 
@@ -829,7 +831,7 @@ Type Exp(Node *n, Operand place){
 				printf("Error type 1 at Line %d: Undefined variable \"%s\".\n", child->line, child->value);
 				return NULL;
 			}
-
+			
 			if(place!=NULL){
 				place->kind = VARIABLE;
 				place->u.value = child->value;
@@ -1037,7 +1039,6 @@ Type Exp(Node *n, Operand place){
 					assignCode2->kind = ASSIGN_N;
 					insertCode(assignCode2);
 				}
-
 				return lhs;
 			}
 			else{
@@ -1089,8 +1090,6 @@ Type Exp(Node *n, Operand place){
 					calcCode->u.binop.result = place;
 					insertCode(calcCode);
 				}
-
-				lhs->assign = RIGHT;
 				return lhs;
 			}
 			else{

@@ -17,3 +17,13 @@ clean:
 remake:
 	make clean
 	make
+
+test1:
+	./parser ./testcase/testcase1.txt out1.s
+
+test2:
+	./parser ./testcase/testcase2.txt out2.s
+
+test:
+	./parser ./testcase/testcase1.txt out1.s
+	./parser ./testcase/testcase2.txt out2.s
