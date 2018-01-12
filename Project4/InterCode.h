@@ -2,6 +2,8 @@
 #define _INTERCODE_H
 
 #include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 typedef struct Operand_* Operand;
 typedef struct InterCode_* InterCode;

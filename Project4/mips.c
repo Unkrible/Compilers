@@ -1,17 +1,15 @@
 #include "mips.h"
 
-
-
 void printMips(char *fileName){
 	fp = fopen(fileName, "w");
 	if(fp==NULL){
-		printf("ERROR: Can not open file 's'.", fileName);
+		printf("ERROR: Can not open file \"%s\".", fileName);
 		return;
 	}
 
 	fputs(".data\n", fp);
 	fputs("_prompt: .asciiz \"Enter an integer:\"\n", fp);
-	fputs("_ret: .asciiz \"\\n\"\n", fp)
+	fputs("_ret: .asciiz \"\\n\"\n", fp);
 	fputs(".globl main\n", fp);
 	fputs(".text\n",fp);
 	// FUNCTION read
@@ -42,7 +40,6 @@ void printMips(char *fileName){
 void printMipsCode(InterCode interCode){
 	switch (interCode->kind) {
 		case LABEL_N:
-		//TODO: write all the last label's variables to disk
 			mipsLabel(interCode);
 			break;
 		case ASSIGN_N:
@@ -77,12 +74,12 @@ void printMipsCode(InterCode interCode){
 			break;
 		case PARAM_N:
 			mipsParam(interCode);
-		break;
+			break;
 		case DEC_N:
 			mipsDec(interCode);
 			break;
 		default:
-			printf("Error: Unknown Kind to MIPS\n", );
+			printf("Error: Unknown Kind to MIPS\n");
 			exit(-1);
 	}
 }
@@ -95,7 +92,7 @@ void mipsLabel(InterCode interCode){
 	fputs(str, fp);
 }
 
-void mipsAssign(InterCode interCode, FILE fp){
+void mipsAssign(InterCode interCode){
 	char str[50];
 	memset(str, 0, sizeof(str));
 	Operand leftOp = interCode->u.assign.left;
@@ -143,9 +140,9 @@ void mipsOperation(InterCode interCode){
 	char str[50];
 	memset(str, 0, sizeof(str));
 	// + - * /
-	Operand result = interCode->binop.result;
-	Operand leftOp = interCode->binop.op1;
-	Operand rightOp = interCode->binop.op2;
+	Operand result = interCode->u.binop.result;
+	Operand leftOp = interCode->u.binop.op1;
+	Operand rightOp = interCode->u.binop.op2;
 	int x, y, z;
 	if((leftOp->kind==TEMPVAR||leftOp->kind==VARIABLE)&&(rightOp->kind==TEMPVAR||rightOp->kind==VARIABLE)){
 		x = getReg(result);
@@ -167,7 +164,7 @@ void mipsOperation(InterCode interCode){
 		}
 		fputs(str, fp);
 	}
-	else if((leftOp->kind==CONSTANT)&&(rightop->kind==TEMPVAR||rightOp->kind==VARIABLE)){
+	else if((leftOp->kind==CONSTANT)&&(rightOp->kind==TEMPVAR||rightOp->kind==VARIABLE)){
 		x = getReg(result);
 		y = getReg(rightOp);
 		switch (interCode->kind) {
@@ -201,27 +198,27 @@ void mipsOperation(InterCode interCode){
 	swReg(x);
 }
 
-void mispRead(InterCode interCode){
+void mipsRead(InterCode interCode){
 	char str[50];
 	memset(str, 0, sizeof(str));
-	r = getReg(interCode->u.signop.op);
+	int r = getReg(interCode->u.sinop.op);
 
 	sprintf(str, "jal read\nmove %s, $v0", printReg(r));
 	fputs(str, fp);
 	swReg(r);
 }
 
-void mispWrite(InterCode interCode){
+void mipsWrite(InterCode interCode){
 	char str[50];
 	memset(str, 0, sizeof(str));
-	r = getReg(interCode->u.signop.op);
+	int r = getReg(interCode->u.sinop.op);
 
 	sprintf(str, "move $a0, %s\njal write\n", printReg(r));
 	fputs(str, fp);
 	swReg(r);
 }
 
-void mispCall(InterCode interCode){
+void mipsCall(InterCode interCode){
 	fputs("\tsubu $sp, $sp, 4\n", fp);
 	fputs("\tsw $ra, 0($sp)\n", fp);
 
@@ -239,7 +236,7 @@ void mispCall(InterCode interCode){
 	fputs("addi $sp, $sp, 4", fp);
 }
 
-void mispReturn(InterCode interCode){
+void mipsReturn(InterCode interCode){
 	char str[50];
 	memset(str, 0, sizeof(str));
 	Operand op = interCode->u.sinop.op;
@@ -250,7 +247,7 @@ void mispReturn(InterCode interCode){
 	fputs(str, fp);
 }
 
-void mispGOTO(InterCode interCode){
+void mipsGOTO(InterCode interCode){
 	char str[50];
 	memset(str, 0, sizeof(str));
 	// j x
@@ -258,7 +255,7 @@ void mispGOTO(InterCode interCode){
 	fputs(str, fp);
 }
 
-void mispIFGOTO(InterCode interCode){
+void mipsIFGOTO(InterCode interCode){
 	char str[50];
 	memset(str, 0, sizeof(str));
 	Operand leftOp = interCode->u.triop.x;
@@ -299,7 +296,7 @@ void mipsFunction(InterCode interCode){
 void mipsArg(InterCode interCode){
 	char str[50];
 	memset(str, 0, sizeof(str));
-	Operand op = interCode->u.sinop;
+	Operand op = interCode->u.sinop.op;
 	char argName[20];
 	memset(argName, 0, 20);
 	sprintf(argName, "t%d", op->u.var_no);
@@ -360,8 +357,8 @@ int getReg(Operand op){
 	if(var == NULL){
 		var = malloc(sizeof(Var_t));
 		var->name = name;
-		offset -= 4;
-		var->offset = offset;
+		spOffset -= 4;
+		var->offset = spOffset;
 		addVar(var);
 		var->reg = i;
 		regs[i].var = var;
@@ -374,7 +371,7 @@ int getReg(Operand op){
 }
 
 char* printReg(int index){
-	return regs[i].name;
+	return regs[index].name;
 }
 
 void swReg(int index){

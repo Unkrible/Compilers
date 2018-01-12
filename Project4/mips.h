@@ -2,13 +2,14 @@
 #define MIPS_H
 
 #define REG_NUM 32
-#define REG_T_START = 8
-#define REG_T_END = 16
+#define REG_T_START 8
+#define REG_T_END 16
 
 #include "InterCode.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 
 typedef struct Var_t {
 	char *name;
@@ -52,8 +53,10 @@ Var_t* findVar(char *name);
 extern Register_ regs[];
 extern char* regName[];
 extern FILE* fp;
+extern Var_t *varList;
 extern int curReg;
 extern int spOffset;
 extern int curParam;
 extern const int stackSize;
+
 #endif
