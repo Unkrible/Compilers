@@ -1427,8 +1427,10 @@ int Args(Node *n, FieldList param, Operand arg){
 	}
 
 	Type tmpParam = Exp(child,t);
-	t->next=arg->next;
-	arg->next=t;
+	Operand tmpOp = arg;
+	while(tmpOp->next!=NULL)
+		tmpOp = tmpOp->next;
+	tmpOp->next=t;
 	if(typeEqual(param->type, tmpParam)==0){
 		if(child->sibling==NULL)
 				return 0;

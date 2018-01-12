@@ -38,7 +38,6 @@ void printMips(char *fileName){
 }
 
 void printMipsCode(InterCode interCode){
-		printf("%d\n", interCode->kind);
 	switch (interCode->kind) {
 		case LABEL_N:
 			mipsLabel(interCode);
@@ -467,7 +466,6 @@ int getReg(Operand op){
 	else if(op->kind == VARIABLE){
 		name = op->u.value;
 	}
-	printf("var: %s\n", name);
 	Var_t* var = findVar(name);
 	int i = curReg + REG_T_START;
 	curReg = (++curReg)%(REG_T_END - REG_T_START);
