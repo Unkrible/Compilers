@@ -55,5 +55,5 @@ extern FILE* fp;
 extern int curReg;
 extern int spOffset;
 extern int curParam;
-
+extern const int stackSize;
 #endif

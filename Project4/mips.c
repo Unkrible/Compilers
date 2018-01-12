@@ -9,39 +9,28 @@ void printMips(char *fileName){
 		return;
 	}
 
-	fputs(".data\n_prompt: .asciiz \"Enter an integer:\"\n",fp);
+	fputs(".data\n", fp);
+	fputs("_prompt: .asciiz \"Enter an integer:\"\n", fp);
 	fputs("_ret: .asciiz \"\\n\"\n", fp)
-	fputs(".globl main\n.text\n",fp);
+	fputs(".globl main\n", fp);
+	fputs(".text\n",fp);
 	// FUNCTION read
-	fputs("read:\n",fp);
-	fputs("\tsubu $sp, $sp, 4\n",fp);
-	fputs("\tsw $ra, 0($sp)\n",fp);
-	fputs("\tsubu $sp, $sp, 4\n",fp);
-	fputs("\tsw $fp, 0($sp)\n",fp);
-	fputs("\taddi $fp, $sp, 8\n",fp);
-	fputs("\tli $v0, 4\n\tla $a0, _prompt\n",fp);
-	fputs("\tsyscall\n\tli $v0, 5\n\tsyscall\n",fp);
-	fputs("\tsubu $sp, $fp, 8\n",fp);
-	fputs("\tlw $fp, 0($sp)\n",fp);
-	fputs("\taddi $sp, $sp, 4\n",fp);
-	fputs("\tlw $ra, 0($sp)\n",fp);
-	fputs("\taddi $sp, $sp, 4\n",fp);
-	fputs("\tjr $ra\n",fp);
+	fputs("\nread:\n", fp);
+	fputs("\tli $v0, 4\n", fp);
+	fputs("\tla $a0, _prompt\n",fp);
+	fputs("\tsyscall\n", fp);
+	fputs("\tli $v0, 5\n", fp);
+	fputs("\tsyscall\n", fp);
+	fputs("\tjr $ra\n", fp);
 	// FUNCTION write
 	fputs("\nwrite:\n",fp);
-	fputs("\tsubu $sp, $sp, 4\n",fp);
-	fputs("\tsw $ra, 0($sp)\n",fp);
-	fputs("\tsubu $sp, $sp, 4\n",fp);
-	fputs("\tsw $fp, 0($sp)\n",fp);
-	fputs("\taddi $fp, $sp, 8\n",fp);
-	fputs("\tli $v0, 1\n\tsyscall\n\tli $v0, 4\n",fp);
-	fputs("\tla $a0, _ret\n\tsyscall\n\tmove $v0, $0\n",fp);
-	fputs("\tsubu $sp, $fp, 8\n",fp);
-	fputs("\tlw $fp, 0($sp)\n",fp);
-	fputs("\taddi $sp, $sp, 4\n",fp);
-	fputs("\tlw $ra, 0($sp)\n",fp);
-	fputs("\taddi $sp, $sp, 4\n",fp);
-	fputs("\tjr $ra\n",fp);
+	fputs("\tli $v0, 1\n", fp);
+	fputs("\tsyscall\n", fp);
+	fputs("\tli $v0, 4\n", fp);
+	fputs("\tla $a0, _ret\n", fp);
+	fputs("\tsyscall\n", fp);
+	fputs("\tmove $v0, $0\n", fp);
+	fputs("\tjr $ra\n", fp);
 
 	InterCode itor = code_head;
 	while(itor != NULL){
@@ -111,25 +100,26 @@ void mipsAssign(InterCode interCode, FILE fp){
 	memset(str, 0, sizeof(str));
 	Operand leftOp = interCode->u.assign.left;
 	Operand rightOp = interCode->u.assign.right;
+	int x, y;
 	if(leftOp->kind==TEMPVAR || leftOp->kind==VARIABLE){
 		// x:= #k
 		if(rightOp->kind == CONSTANT){
 			// li reg(x), k
-				int i = getReg(leftOp);
-				sprintf(str, "li %s, %s\n", printReg(i), rightOp->u.value);
+				x = getReg(leftOp);
+				sprintf(str, "li %s, %s\n", printReg(x), rightOp->u.value);
 				fputs(str, fp);
 		}
 		// x:= y
 		else if(rightOp->kind==TEMPVAR || rightOp->kind==VARIABLE){
-				int x = getReg(leftOp);
-				int y = getReg(rightOp);
+				x = getReg(leftOp);
+				y = getReg(rightOp);
 				sprintf(str, "move %s, %s\n", printReg(x), printReg(y));
 				fputs(str, fp);
 		}
 		// x:= *y
 		else if(rightOp->kind==TADDRESS || rightOp->kind==VADDRESS){
-				int x = getReg(leftOp);
-				int y = getReg(rightOp);
+				x = getReg(leftOp);
+				y = getReg(rightOp);
 				sprintf(str, "lw %s, 0(%s)\n", printReg(x), printReg(y));
 				fputs(str, fp);
 		}
@@ -140,12 +130,13 @@ void mipsAssign(InterCode interCode, FILE fp){
 			// Can't resolve it temporarily
 			exit(-1);
 		} else if(rightOp->kind==VARIABLE || rightOp->kind==TEMPVAR){
-			int x = getReg(leftOp);
-			int y = getReg(rightOp);
+			x = getReg(leftOp);
+			y = getReg(rightOp);
 			sprintf(str, "sw %s, 0(%s)\n", printReg(y), printReg(x));
 			fputs(str, fp);
 		}
 	}
+	swReg(x);
 }
 
 void mipsOperation(InterCode interCode){
@@ -155,11 +146,11 @@ void mipsOperation(InterCode interCode){
 	Operand result = interCode->binop.result;
 	Operand leftOp = interCode->binop.op1;
 	Operand rightOp = interCode->binop.op2;
-
+	int x, y, z;
 	if((leftOp->kind==TEMPVAR||leftOp->kind==VARIABLE)&&(rightOp->kind==TEMPVAR||rightOp->kind==VARIABLE)){
-		int x = getReg(result);
-		int y = getReg(leftOp);
-		int z = getReg(rightOp);
+		x = getReg(result);
+		y = getReg(leftOp);
+		z = getReg(rightOp);
 		switch (interCode->kind) {
 			case ADD_N:
 			sprintf(str, "add %s, %s, %s\n", printReg(x), printReg(y), printReg(z));
@@ -171,14 +162,14 @@ void mipsOperation(InterCode interCode){
 			sprintf(str, "mul %s, %s, %s\n", printReg(x), printReg(y), printReg(z));
 			break;
 			case DIV_N:
-			sprintf(str, "div %s, %s\nmflo %s\n", printReg(y), printReg(z), printReg(,));
+			sprintf(str, "div %s, %s\nmflo %s\n", printReg(y), printReg(z), printReg(x));
 			break;
 		}
 		fputs(str, fp);
 	}
 	else if((leftOp->kind==CONSTANT)&&(rightop->kind==TEMPVAR||rightOp->kind==VARIABLE)){
-		int x = getReg(result);
-		int y = getReg(rightOp);
+		x = getReg(result);
+		y = getReg(rightOp);
 		switch (interCode->kind) {
 			case ADD_N:
 				sprintf(str, "addi %s, %s, %s\n", printReg(x), printReg(y), leftOp->u.value);
@@ -192,8 +183,8 @@ void mipsOperation(InterCode interCode){
 		fputs(str, fp);
 	}
 	else if((rightOp->kind==CONSTANT)&&(leftOp->kind==TEMPVAR||leftOp->kind==VARIABLE)){
-		int x = getReg(result);
-		int y = getReg(leftOp);
+		x = getReg(result);
+		y = getReg(leftOp);
 		switch (interCode->kind) {
 			case ADD_N:
 				sprintf(str, "addi %s, %s, %s\n", printReg(x), printReg(y), rightOp->u.value);
@@ -207,6 +198,7 @@ void mipsOperation(InterCode interCode){
 		}
 		fputs(str, fp);
 	}
+	swReg(x);
 }
 
 void mispRead(InterCode interCode){
@@ -216,22 +208,35 @@ void mispRead(InterCode interCode){
 
 	sprintf(str, "jal read\nmove %s, $v0", printReg(r));
 	fputs(str, fp);
+	swReg(r);
 }
 
 void mispWrite(InterCode interCode){
+	char str[50];
+	memset(str, 0, sizeof(str));
+	r = getReg(interCode->u.signop.op);
 
+	sprintf(str, "move $a0, %s\njal write\n", printReg(r));
+	fputs(str, fp);
+	swReg(r);
 }
 
 void mispCall(InterCode interCode){
-	char str[50];
-	memset(str, 0, sizeof(str));
+	fputs("\tsubu $sp, $sp, 4\n", fp);
+	fputs("\tsw $ra, 0($sp)\n", fp);
+
 	Operand op = interCode->u.assign.left;
 	Operand func = interCode->u.assign.right;
 	int x = getReg(op);
 	// jal f
 	// move reg(x), $v0
-	sprintf(str, "jal %s\nmove %s, $v0\n",op->u.value,printReg(x));
+	char str[50];
+	memset(str, 0, sizeof(str));
+	sprintf(str, "jal %s\nmove %s, $v0\n", func->u.value, printReg(x));
 	fputs(str, fp);
+	swReg(x);
+	fputs("lw $ra, 0($sp)", fp);
+	fputs("addi $sp, $sp, 4", fp);
 }
 
 void mispReturn(InterCode interCode){
@@ -241,7 +246,7 @@ void mispReturn(InterCode interCode){
 	int x = getReg(op);
 	// move $v0, reg(x)
 	// jr $ra
-	sprintf(str, "move $v0, %s\njr $ra\n",printReg(x));
+	sprintf(str, "move $v0, %s\naddi $sp, $sp, %d\nlw $fp, 0($sp)\naddi $sp, $sp, 4\njr $ra\n", printReg(x), stackSize);
 	fputs(str, fp);
 }
 
@@ -281,12 +286,14 @@ void mispIFGOTO(InterCode interCode){
 }
 
 void mipsFunction(InterCode interCode){
+
 	char str[50];
 	memset(str, 0, sizeof(str));
 	// function:
-	sprintf(str, "%s:\n",interCode->u.sinop.op->u.value);
-	spOffset = 0;
+	sprintf(str, "%s:\nsubu $sp, $sp, 4\nsw $fp, 0($sp)\nmove $fp, $sp\nsubu $sp, $sp, %d\n",interCode->u.sinop.op->u.value,stackSize);
 	fputs(str, fp);
+	spOffset = 0;
+	curParam = 0;
 }
 
 void mipsArg(InterCode interCode){
@@ -427,6 +434,7 @@ FILE *fp = NULL;
 int curReg = 0;
 int spOffset = 0;
 int curParam = 0;
+const int stackSize = 100;
 
 char* regName[] = {
 	"$zero",
