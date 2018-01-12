@@ -1,0 +1,8 @@
+FUNCTION main : 
+DEC t1 8
+a := &t1 
+t7 := a + #2 
+*t7:= #13 
+t12 := a + #2 
+WRITE *t12
+RETURN #0 
