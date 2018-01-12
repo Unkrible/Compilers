@@ -79,6 +79,8 @@ void printMipsCode(InterCode interCode){
 		case DEC_N:
 			mipsDec(interCode);
 			break;
+		case ADDRESS_N:
+			mipsAddress(interCode);
 		default:
 			printf("Error: Unknown Kind to MIPS\n");
 			exit(-1);
@@ -401,6 +403,28 @@ void mipsDec(InterCode interCode){
 	memset(str, 0, sizeof(str));
   sprintf(str, "\taddi $s1, $fp, %d\n\tsw $s1, %d($fp)\n", spOffset, arrayHead->offset);
 	fputs(str, fp);
+}
+
+void mipsAddress(InterCode interCode){
+	Operand leftOp = interCode->u.assign.left;
+	Operand rightOp = interCode->u.assign.right;
+	Var_t *arrayHead=NULL;
+	if(rightOp->kind == TEMPVAR){
+		char argName[20];
+		memset(argName, 0, 20);
+		sprintf(argName, "t%d", rightOp->u.var_no);
+		arrayHead = findVar(argName);
+	} else if(rightOp->kind ==VARIABLE){
+		arrayHead = findVar(rightOp->u.value);
+	}
+	if(arrayHead == NULL)
+		exit(-1);
+	int x = getReg(leftOp);
+	char str[STR_LENGTH];
+	memset(str, 0, sizeof(str));
+	sprintf(str, "\tlw %s, %d($fp)\n", printReg(x), arrayHead->offset);
+	fputs(str, fp);
+	swReg(x);
 }
 
 // Register
