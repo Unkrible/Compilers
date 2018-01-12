@@ -93,7 +93,7 @@ void mipsLabel(InterCode interCode){
 }
 
 void mipsAssign(InterCode interCode){
-	char str[50];
+	char str[STR_LENGTH];
 	memset(str, 0, sizeof(str));
 	Operand leftOp = interCode->u.assign.left;
 	Operand rightOp = interCode->u.assign.right;
@@ -137,7 +137,7 @@ void mipsAssign(InterCode interCode){
 }
 
 void mipsOperation(InterCode interCode){
-	char str[50];
+	char str[STR_LENGTH];
 	memset(str, 0, sizeof(str));
 	// + - * /
 	Operand result = interCode->u.binop.result;
@@ -199,7 +199,7 @@ void mipsOperation(InterCode interCode){
 }
 
 void mipsRead(InterCode interCode){
-	char str[50];
+	char str[STR_LENGTH];
 	memset(str, 0, sizeof(str));
 	int r = getReg(interCode->u.sinop.op);
 
@@ -209,7 +209,7 @@ void mipsRead(InterCode interCode){
 }
 
 void mipsWrite(InterCode interCode){
-	char str[50];
+	char str[STR_LENGTH];
 	memset(str, 0, sizeof(str));
 	int r = getReg(interCode->u.sinop.op);
 
@@ -227,7 +227,7 @@ void mipsCall(InterCode interCode){
 	int x = getReg(op);
 	// jal f
 	// move reg(x), $v0
-	char str[50];
+	char str[STR_LENGTH];
 	memset(str, 0, sizeof(str));
 	sprintf(str, "jal %s\nmove %s, $v0\n", func->u.value, printReg(x));
 	fputs(str, fp);
@@ -237,7 +237,7 @@ void mipsCall(InterCode interCode){
 }
 
 void mipsReturn(InterCode interCode){
-	char str[50];
+	char str[STR_LENGTH];
 	memset(str, 0, sizeof(str));
 	Operand op = interCode->u.sinop.op;
 	int x = getReg(op);
@@ -248,7 +248,7 @@ void mipsReturn(InterCode interCode){
 }
 
 void mipsGOTO(InterCode interCode){
-	char str[50];
+	char str[STR_LENGTH];
 	memset(str, 0, sizeof(str));
 	// j x
 	sprintf(str, "j label%d:\n",interCode->u.sinop.op->u.var_no);
@@ -256,7 +256,7 @@ void mipsGOTO(InterCode interCode){
 }
 
 void mipsIFGOTO(InterCode interCode){
-	char str[50];
+	char str[STR_LENGTH];
 	memset(str, 0, sizeof(str));
 	Operand leftOp = interCode->u.triop.x;
 	Operand rightOp = interCode->u.triop.y;
@@ -284,7 +284,7 @@ void mipsIFGOTO(InterCode interCode){
 
 void mipsFunction(InterCode interCode){
 
-	char str[50];
+	char str[STR_LENGTH];
 	memset(str, 0, sizeof(str));
 	// function:
 	sprintf(str, "%s:\nsubu $sp, $sp, 4\nsw $fp, 0($sp)\nmove $fp, $sp\nsubu $sp, $sp, %d\n",interCode->u.sinop.op->u.value,stackSize);
@@ -295,7 +295,7 @@ void mipsFunction(InterCode interCode){
 }
 
 void mipsArg(InterCode interCode){
-	char str[50];
+	char str[STR_LENGTH];
 	memset(str, 0, sizeof(str));
 	Operand op = interCode->u.sinop.op;
 	char argName[20];
@@ -313,7 +313,7 @@ void mipsArg(InterCode interCode){
 }
 
 void mipsParam(InterCode interCode){
-	char str[50];
+	char str[STR_LENGTH];
 	memset(str, 0, sizeof(str));
 
 	Var_t* param = malloc(sizeof(Var_t));
