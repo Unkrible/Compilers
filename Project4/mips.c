@@ -246,6 +246,7 @@ void mipsCall(InterCode interCode){
 	swReg(x);
 	fputs("\tlw $ra, 0($sp)\n", fp);
 	fputs("\taddi $sp, $sp, 4\n", fp);
+	curArg = 0;
 }
 
 void mipsReturn(InterCode interCode){
@@ -358,9 +359,12 @@ void mipsArg(InterCode interCode){
 	}
 	if(arg == NULL)
 		exit(-1);
-	sprintf(str, "\tlw $a%d, %d($fp)\n", curArg, arg->offset);
+	if(curArg<4){
+		sprintf(str, "\tlw $a%d, %d($fp)\n", curArg, arg->offset);
+	} else{
+		sprintf(str, "\tlw $s0, %d($fp)\n\tlw $s0, 0($sp)\n\taddi $sp, $sp, 4\n", arg->offset);
+	}
 	fputs(str, fp);
-	//TODO: add param if curArg>4
 	++curArg;
 	if(interCode->next==NULL || interCode->next->kind!=ARG_N){
 		curArg = 0;
@@ -376,15 +380,27 @@ void mipsParam(InterCode interCode){
 	spOffset -= 4;
 	param->offset = spOffset;
 	addVar(param);
-
-	sprintf(str, "\tsw $a%d, %d($fp)\n", curParam, param->offset);
+	if(curParam<4){
+		sprintf(str, "\tsw $a%d, %d($fp)\n", curParam, param->offset);
+	} else {
+		sprintf(str, "\tlw $a0, %d($fp)\n\tsw $a0, %d($fp)\n", (curParam-2)*4, param->offset);
+	}
 	fputs(str, fp);
-	//TODO: add param if curParam>4
 	++curParam;
 }
 
 void mipsDec(InterCode interCode){
+	Var_t *arrayHead = malloc(sizeof(Var_t));
+  spOffset -= 4;
+  arrayHead->offset = spOffset;
+	spOffset -= interCode->u.dec.size;
+	arrayHead->name = interCode->u.dec.op->u.value;
+  addVar(arrayHead);
 
+	char str[STR_LENGTH];
+	memset(str, 0, sizeof(str));
+  sprintf(str, "\taddi $s1, $fp, %d\n\tsw $s1, %d($fp)\n", spOffset, arrayHead->offset);
+	fputs(str, fp);
 }
 
 // Register
