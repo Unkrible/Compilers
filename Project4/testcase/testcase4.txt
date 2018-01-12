@@ -1,0 +1,11 @@
+int test(int a, int b, int c, int d, int e){
+	e = c + d;
+	return e;
+}
+
+int main(){
+	int f=0, g=1, h=2, i=3, k=4, m;
+	m = test(f, g, h, i, k);
+	write(m);
+	return 0;		
+}

@@ -1,0 +1,22 @@
+FUNCTION test : 
+PARAM a 
+PARAM b 
+PARAM c 
+PARAM d 
+PARAM e 
+e := c + d 
+RETURN e 
+FUNCTION main : 
+f := #0 
+g := #1 
+h := #2 
+i := #3 
+k := #4 
+ARG k 
+ARG i 
+ARG h 
+ARG g 
+ARG f 
+m := CALL test 
+WRITE m 
+RETURN #0 

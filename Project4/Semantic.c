@@ -1142,7 +1142,7 @@ Type Exp(Node *n, Operand place){
 				memset(wideOp, 0, sizeof(Operand_));
 				wideOp->kind = CONSTANT;
 				char* wideStr = malloc(16*sizeof(char));
-				int wide = array->u.array.size;
+				int wide = typeSize(array->u.array.elem);
 				sprintf(wideStr, "%d", wide);
 				wideOp->u.value = wideStr;
 

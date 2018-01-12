@@ -81,6 +81,7 @@ void printMipsCode(InterCode interCode){
 			break;
 		case ADDRESS_N:
 			mipsAddress(interCode);
+			break;
 		default:
 			printf("Error: Unknown Kind to MIPS\n");
 			exit(-1);
@@ -127,8 +128,9 @@ void mipsAssign(InterCode interCode){
 	} else if(leftOp->kind==TADDRESS || leftOp->kind==VADDRESS){
 		// *x = y
 		if(rightOp->kind == CONSTANT){
-			// Can't resolve it temporarily
-			exit(-1);
+			x = getReg(leftOp);
+			sprintf(str, "\tli $s3, %s\n\tsw $s3, 0(%s)\n", rightOp->u.value, printReg(x));
+			fputs(str, fp);
 		} else if(rightOp->kind==VARIABLE || rightOp->kind==TEMPVAR){
 			x = getReg(leftOp);
 			y = getReg(rightOp);
@@ -223,8 +225,11 @@ void mipsWrite(InterCode interCode){
 	char str[STR_LENGTH];
 	memset(str, 0, sizeof(str));
 	int r = getReg(interCode->u.sinop.op);
-
-	sprintf(str, "\tmove $a0, %s\n\tjal write\n", printReg(r));
+	if(interCode->u.sinop.op->kind == TEMPVAR || interCode->u.sinop.op->kind == VARIABLE)
+		sprintf(str, "\tmove $a0, %s\n\tjal write\n", printReg(r));
+	else if(interCode->u.sinop.op->kind == TADDRESS || interCode->u.sinop.op->kind == VADDRESS){
+		sprintf(str, "\tlw $a0, 0(%s)\n\tjal write\n", printReg(r));
+	}
 	fputs(str, fp);
 	swReg(r);
 
@@ -364,7 +369,7 @@ void mipsArg(InterCode interCode){
 	if(curArg<4){
 		sprintf(str, "\tlw $a%d, %d($fp)\n", curArg, arg->offset);
 	} else{
-		sprintf(str, "\tlw $s0, %d($fp)\n\tlw $s0, 0($sp)\n\taddi $sp, $sp, 4\n", arg->offset);
+		sprintf(str, "\tlw $s0, %d($fp)\n\tsubu $sp, $sp, 4\n\tlw $s0, 0($sp)\n", arg->offset);
 	}
 	fputs(str, fp);
 	++curArg;
@@ -393,15 +398,22 @@ void mipsParam(InterCode interCode){
 
 void mipsDec(InterCode interCode){
 	Var_t *arrayHead = malloc(sizeof(Var_t));
-  spOffset -= 4;
-  arrayHead->offset = spOffset;
+  	spOffset -= 4;
+  	arrayHead->offset = spOffset;
 	spOffset -= interCode->u.dec.size;
-	arrayHead->name = interCode->u.dec.op->u.value;
-  addVar(arrayHead);
+	if(interCode->u.dec.op->kind == VARIABLE){
+		arrayHead->name = interCode->u.dec.op->u.value;
+	} else if(interCode->u.dec.op->kind == TEMPVAR){
+		char *arrayName = malloc(32);
+		memset(arrayName, 0, sizeof(arrayName));
+		sprintf(arrayName, "t%d", interCode->u.dec.op->u.var_no);
+		arrayHead->name = arrayName;
+	}
+ 	addVar(arrayHead);
 
 	char str[STR_LENGTH];
 	memset(str, 0, sizeof(str));
-  sprintf(str, "\taddi $s1, $fp, %d\n\tsw $s1, %d($fp)\n", spOffset, arrayHead->offset);
+ 	sprintf(str, "\taddi $s1, $fp, %d\n\tsw $s1, %d($fp)\n", spOffset, arrayHead->offset);
 	fputs(str, fp);
 }
 
@@ -410,15 +422,16 @@ void mipsAddress(InterCode interCode){
 	Operand rightOp = interCode->u.assign.right;
 	Var_t *arrayHead=NULL;
 	if(rightOp->kind == TEMPVAR){
-		char argName[20];
-		memset(argName, 0, 20);
-		sprintf(argName, "t%d", rightOp->u.var_no);
-		arrayHead = findVar(argName);
-	} else if(rightOp->kind ==VARIABLE){
+		char *arrayName = malloc(32);
+		memset(arrayName, 0, sizeof(arrayName));
+		sprintf(arrayName, "t%d", rightOp->u.var_no);
+		arrayHead = findVar(arrayName);
+	} else if(rightOp->kind == VARIABLE){
 		arrayHead = findVar(rightOp->u.value);
 	}
-	if(arrayHead == NULL)
+	if(arrayHead == NULL){
 		exit(-1);
+	}
 	int x = getReg(leftOp);
 	char str[STR_LENGTH];
 	memset(str, 0, sizeof(str));
@@ -439,12 +452,22 @@ void initRegs(){
 int getReg(Operand op){
 	char *name = NULL;
 	if(op->kind == TEMPVAR){
-		name = malloc(32);
-		memset(name, 0, 32);
+		name = malloc(40);
+		memset(name, 0, sizeof(name));
 		sprintf(name, "t%d", op->u.var_no);
-	} else if(op->kind == VARIABLE){
+	}
+   	else if(op->kind == TADDRESS){
+		name = malloc(40);
+		memset(name, 0, sizeof(name));
+		sprintf(name, "t%d", op->u.addr->u.var_no);
+	}	
+   	else if(op->kind == VADDRESS){
+		name = op->u.addr->u.value;
+	}	
+	else if(op->kind == VARIABLE){
 		name = op->u.value;
 	}
+	printf("var: %s\n", name);
 	Var_t* var = findVar(name);
 	int i = curReg + REG_T_START;
 	curReg = (++curReg)%(REG_T_END - REG_T_START);
@@ -497,7 +520,6 @@ void delVars(){
 void addVar(Var_t *var){
 	if(var==NULL)
 		exit(-1);
-
 	var->next = NULL;
 	if(varList==NULL){
 		varList = var;
@@ -514,8 +536,9 @@ Var_t* findVar(char *name){
 		while(ptr != NULL){
 			if(strcmp(ptr->name, name)==0){
 				break;
+			} else{
+				ptr = ptr->next;
 			}
-			ptr = ptr->next;
 		}
 		return ptr;
 }
