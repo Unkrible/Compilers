@@ -202,7 +202,7 @@ void mipsOperation(InterCode interCode){
 void mipsRead(InterCode interCode){
 	fputs("\tsubu $sp, $sp, 4\n", fp);
 	fputs("\tsw $ra, 0($sp)\n", fp);
-	
+
 	int x = getReg(interCode->u.sinop.op);
 	char str[STR_LENGTH];
 	memset(str, 0, sizeof(str));
@@ -225,7 +225,7 @@ void mipsWrite(InterCode interCode){
 	sprintf(str, "\tmove $a0, %s\n\tjal write\n", printReg(r));
 	fputs(str, fp);
 	swReg(r);
-	
+
 	fputs("\tlw $ra, 0($sp)\n", fp);
 	fputs("\taddi $sp, $sp, 4\n", fp);
 }
@@ -279,21 +279,55 @@ void mipsIFGOTO(InterCode interCode){
 	Operand label = interCode->u.triop.label;
 	char *op = interCode->u.triop.op;
 
-	int x = getReg(leftOp);
-	int y = getReg(rightOp);
-	// bxx reg(x), reg(y), z
-	if(strcmp(op, "==")==0){
-		sprintf(str, "\tbeq %s, %s, label%d\n",printReg(x), printReg(y), label->u.var_no);
-	} else if(strcmp(op, "!=")==0){
-		sprintf(str, "\tbne %s, %s, label%d\n",printReg(x), printReg(y), label->u.var_no);
-	} else if(strcmp(op, ">")==0){
-		sprintf(str, "\tbgt %s, %s, label%d\n",printReg(x), printReg(y), label->u.var_no);
-	} else if(strcmp(op, "<")==0){
-		sprintf(str, "\tblt %s, %s, label%d\n",printReg(x), printReg(y), label->u.var_no);
-	} else if(strcmp(op, ">=")==0){
-		sprintf(str, "\tbge %s, %s, label%d\n",printReg(x), printReg(y), label->u.var_no);
-	} else if(strcmp(op, "<=")==0){
-		sprintf(str, "\tble %s, %s, label%d\n",printReg(x), printReg(y), label->u.var_no);
+	if(leftOp->kind != CONSTANT && rightOp->kind != CONSTANT){
+		int x = getReg(leftOp);
+		int y = getReg(rightOp);
+		// bxx reg(x), reg(y), z
+		if(strcmp(op, "==")==0){
+			sprintf(str, "\tbeq %s, %s, label%d\n",printReg(x), printReg(y), label->u.var_no);
+		} else if(strcmp(op, "!=")==0){
+			sprintf(str, "\tbne %s, %s, label%d\n",printReg(x), printReg(y), label->u.var_no);
+		} else if(strcmp(op, ">")==0){
+			sprintf(str, "\tbgt %s, %s, label%d\n",printReg(x), printReg(y), label->u.var_no);
+		} else if(strcmp(op, "<")==0){
+			sprintf(str, "\tblt %s, %s, label%d\n",printReg(x), printReg(y), label->u.var_no);
+		} else if(strcmp(op, ">=")==0){
+			sprintf(str, "\tbge %s, %s, label%d\n",printReg(x), printReg(y), label->u.var_no);
+		} else if(strcmp(op, "<=")==0){
+			sprintf(str, "\tble %s, %s, label%d\n",printReg(x), printReg(y), label->u.var_no);
+		}
+	} else if(leftOp->kind == CONSTANT && rightOp->kind != CONSTANT){
+		int y = getReg(rightOp);
+		// bxx reg(x), reg(y), z
+		if(strcmp(op, "==")==0){
+			sprintf(str, "\tbeq %s, %s, label%d\n", printReg(y), leftOp->u.value, label->u.var_no);
+		} else if(strcmp(op, "!=")==0){
+			sprintf(str, "\tbne %s, %s, label%d\n", printReg(y), leftOp->u.value, label->u.var_no);
+		} else if(strcmp(op, ">")==0){
+			sprintf(str, "\tblt %s, %s, label%d\n", printReg(y), leftOp->u.value, label->u.var_no);
+		} else if(strcmp(op, "<")==0){
+			sprintf(str, "\tbgt %s, %s, label%d\n", printReg(y), leftOp->u.value, label->u.var_no);
+		} else if(strcmp(op, ">=")==0){
+			sprintf(str, "\tble %s, %s, label%d\n", printReg(y), leftOp->u.value, label->u.var_no);
+		} else if(strcmp(op, "<=")==0){
+			sprintf(str, "\tbge %s, %s, label%d\n", printReg(y), leftOp->u.value, label->u.var_no);
+		}
+	} else if(right->kind == CONSTANT && leftOp->kind != CONSTANT){
+		int x = getReg(leftOp);
+		// bxx reg(x), reg(y), z
+		if(strcmp(op, "==")==0){
+			sprintf(str, "\tbeq %s, %s, label%d\n",printReg(x), rightOp->u.value, label->u.var_no);
+		} else if(strcmp(op, "!=")==0){
+			sprintf(str, "\tbne %s, %s, label%d\n",printReg(x), rightOp->u.value, label->u.var_no);
+		} else if(strcmp(op, ">")==0){
+			sprintf(str, "\tbgt %s, %s, label%d\n",printReg(x), rightOp->u.value, label->u.var_no);
+		} else if(strcmp(op, "<")==0){
+			sprintf(str, "\tblt %s, %s, label%d\n",printReg(x), rightOp->u.value, label->u.var_no);
+		} else if(strcmp(op, ">=")==0){
+			sprintf(str, "\tbge %s, %s, label%d\n",printReg(x), rightOp->u.value, label->u.var_no);
+		} else if(strcmp(op, "<=")==0){
+			sprintf(str, "\tble %s, %s, label%d\n",printReg(x), rightOp->u.value, label->u.var_no);
+		}
 	}
 	fputs(str, fp);
 }

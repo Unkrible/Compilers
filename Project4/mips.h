@@ -4,7 +4,7 @@
 #define REG_NUM 32
 #define REG_T_START 8
 #define REG_T_END 16
-#define STR_LENGTH 100
+#define STR_LENGTH 200
 
 #include "InterCode.h"
 #include <stdio.h>
