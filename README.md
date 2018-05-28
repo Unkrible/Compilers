@@ -1,5 +1,4 @@
 # Compilers
-###### 许卓尔
 
 ### Project 1
 
